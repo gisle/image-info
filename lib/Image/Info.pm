@@ -10,7 +10,7 @@ use Symbol ();
 
 use vars qw($VERSION @EXPORT_OK);
 
-$VERSION = '0.03';  # $Date$
+$VERSION = '0.04';  # $Date$
 
 require Exporter;
 *import = \&Exporter::import;
@@ -91,7 +91,7 @@ sub dim
     my $img = shift || return;
     my $x = $img->{width} || return;
     my $y = $img->{height} || return;
-    wantarray ? ($x, $y) : "$x/$y";
+    wantarray ? ($x, $y) : "${x}x$y";
 }
 
 sub html_dim
