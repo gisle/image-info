@@ -67,7 +67,7 @@ sub new
 	    $self->push_info(0, $key, $val);
 	}
 	elsif ($type eq "tIME" && $len == 7) {
-	    $self->push_info(0, "LastModificationTime",
+	    $self->push_info(0, "DateTime",
 			     sprintf("%04d-%02d-%02d %02d:%02d:%02d",
 				     unpack("nC5", $data)));
 	}
