@@ -398,6 +398,11 @@ my %exif_tags = (
 );
 
 my %tiff_tags = (
+  254   => { __TAG__ => "NewSubfileType",
+	     1 => "ReducedResolution",
+	     2 => "SinglePage",
+	     4 => "TransparencyMask",
+	 },
   255   => { __TAG__ => "SubfileType",
 	     1 => "FullResolution",
 	     2 => "ReducedResolution",
@@ -430,6 +435,10 @@ my %tiff_tags = (
 	     2 => "OrderedDither",
 	     3 => "Randomized",
 	   },
+  266   => { __TAG__ => "FillOrder",
+	     1 => "LowInHigh",
+	     2 => "HighInLow",
+	   },
   270   => "ImageDescription",
   271   => "Make",
   272   => "Model",
@@ -455,12 +464,14 @@ my %tiff_tags = (
   296   => {__TAG__ => "ResolutionUnit",
 	    1 => "pixels", 2 => "dpi", 3 => "dpcm",
 	   },
+  297   => "PageNumber",
   301   => "TransferFunction",
   305   => "Software",
   306   => "DateTime",
   315   => "Artist",
   318   => "WhitePoint",
   319   => "PrimaryChromaticities",
+  320   => "ColorMap",
   513   => "JPEGInterchangeFormat",
   514   => "JPEGInterchangeFormatLngth",
   529   => "YCbCrCoefficients",
@@ -539,6 +550,11 @@ sub ifd
 sub tagname
 {
     $tiff_tags{$_[1]} || sprintf "Tag-0x%04x",$_[1];
+}
+
+sub exif_tagname
+{
+    $tiff_tags{$_[1]} || $exif_tags{$_[1]} || sprintf "Tag-0x%04x",$_[1];
 }
 
 sub add_fields

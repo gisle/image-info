@@ -87,6 +87,8 @@ sub determine_file_format
    return "PNG" if /^\x89PNG\x0d\x0a\x1a\x0a/;
    return "PPM" if /^P[1-6]/;;
    return "SVG" if /^<\?xml/;
+   return "TIFF" if /^MM\x00\x2a/;
+   return "TIFF" if /^II\x2a\x00/;
    return "XBM" if /^#define\s+/;
    return "XPM" if /(^\/\* XPM \*\/)|(static\s+char\s+\*\w+\[\]\s*=\s*{\s*"\d+)/;
    return undef;
@@ -359,6 +361,16 @@ All information available is extracted.
 
 SVG also provides (for) a plethora of attributes and metadata of an image.
 See L<Image::Info::SVG> for details.
+
+=item TIFF
+
+The C<TIFF> spec can be found at:
+http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf
+
+Also good writeup on exif spec at:
+http://www.ba.wakwak.com/~tsuruzoh/Computer/Digicams/exif-e.html
+
+=item TIFF
 
 =item XBM
 
