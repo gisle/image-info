@@ -129,7 +129,14 @@ sub process_file
 	    elsif ($label == 0xFF) {  # Application
 		my $app = substr($data, 0, 11, "");
 		my $auth = substr($app, -3, 3, "");
-		$info->push_info($img_no, "APP-$app-$auth" => $data);
+		if ($app eq "NETSCAPE" && $auth eq "2.0"
+		    && $data =~ /^\01/) {
+		    my $loop = unpack("xv", $data);
+		    $loop = "forever" unless $loop;
+		    $info->push_info($img_no, "GIF_Loop" => $loop);
+		} else {
+		    $info->push_info($img_no, "APP-$app-$auth" => $data);
+		}
 	    }
 	    else {
 		$info->push_info($img_no, "GIF_Extension-$label" => $data);
