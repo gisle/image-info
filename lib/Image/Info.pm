@@ -3,7 +3,7 @@
 
 package Image::Info;
 
-# Copyright 1999-2002, Gisle Aas.
+# Copyright 1999-2003, Gisle Aas.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
@@ -13,7 +13,7 @@ use Symbol ();
 
 use vars qw($VERSION @EXPORT_OK);
 
-$VERSION = '1.12';
+$VERSION = '1.13';
 
 require Exporter;
 *import = \&Exporter::import;

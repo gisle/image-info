@@ -1,3 +1,22 @@
+2003-10-06   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.13
+
+    The module reported the SamplesPerPixel field as SamlesPerPixel
+    for PPM files.  Patch contributed by Geoff Richards <qef@ungwe.org>.
+
+    Image::Info was not able to handle files smaller than 32 bytes.
+
+    Support for Olympus C-700UZ and fix for the Olympus-JpegQual
+    attribute contributed by Nick Hibma <n_hibma@van-laarhoven.org>.
+
+    Support for Canon makernote.  Contributed by John Cavanaugh
+    <john-cavanaugh@attbi.com>.
+
+    IO::String v1.02 core dumps fixed by depending on v1.03.
+
+
+
 2002-12-30   Gisle Aas <gisle@ActiveState.com>
 
     Release 1.12
