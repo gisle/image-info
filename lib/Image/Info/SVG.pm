@@ -1,5 +1,7 @@
 package Image::Info::SVG;
-$VERSION = '1.01';
+
+$VERSION = '1.02';
+
 use strict;
 no strict 'refs';
 use XML::Simple;
@@ -32,19 +34,12 @@ sub process_file{
 	return $info->push_info(0, "error", "Not a valid SVG image");
     }
 
-    foreach my $pkg ( qw(SelectSaver
-		       IO::File
-		       IO::Seekable
-		       IO::Handle
-		       XML::Parser
-		       XML::Simple) ){
-	*{"${pkg}::carp"}  = sub { push @warnings, @_; };
-	*{"${pkg}::croak"} = sub { $info->push_info(0, "error", @_); };
-    }
-    $xs = new XML::Simple();
+    local $SIG{__WARN__} = sub {
+	push(@warnings, @_);
+    };
+
+    $xs = XML::Simple->new;
     $img = $xs->XMLin($imgdata);
-    if( $info->get_info(0, "error") ){
-	return; }
 
     $info->push_info(0, "color_type" => "sRGB");
     $info->push_info(0, "file_ext" => "svg");
