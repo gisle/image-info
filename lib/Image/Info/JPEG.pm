@@ -209,7 +209,8 @@ sub process_app14_adobe
 {
     my($info, $data) = @_;
     my($version, $flags0, $flags1, $transform) = unpack("nnnC", $data);
-    $info->push_info(0, "AdobeFlags" => [$flags0, $flags1]);
+    $info->push_info(0, "AdobeTransformVersion" => $version);
+    $info->push_info(0, "AdobeTransformFlags" => [$flags0, $flags1]);
     $info->push_info(0, "AdobeTransform" => $transform);
 }
 
