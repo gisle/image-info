@@ -6,7 +6,6 @@ package Image::Info::PNG;
 # modify it under the same terms as Perl itself.
 
 use strict;
-use base 'Image::Info';
 
 sub my_read
 {
