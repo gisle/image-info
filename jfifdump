@@ -148,12 +148,16 @@ sub process_app1_exif
 	return;
     }
 
-    require Image::TIFF;
-    my $t = Image::TIFF->new(\$data);
+    require Image::TIFF::Exif;
+    my $t = Image::TIFF::Exif->new(\$data);
 
-    my $d = Data::Dump::dump($t);
-    $d =~ s/^/  /gm;
-    print "$d\n";
+    for (0 .. $t->num_ifds - 1) {
+	print "  IFD $_\n";
+	my $d = Data::Dump::dump($t->ifd($_));
+	$d =~ s/^/   /gm;
+	print "$d\n";
+    }
+
 }
 
 sub process_sof
