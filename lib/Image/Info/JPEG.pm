@@ -208,6 +208,7 @@ sub process_app0_jfxx
 	    require IO::String;
 	    my $thumb_fh = IO::String->new($data);
 	    _process_file($info, $thumb_fh, 1);
+	    $thumb_fh->close;
 	};
 	$info->push_info(1, "error" => $@) if $@;
     }
@@ -243,6 +244,7 @@ sub process_app1_exif
 	    require IO::String;
 	    my $fh = IO::String->new($jdata);
 	    _process_file($info, $fh, $i);
+	    $fh->close;
 	}
 
 	# Turn XResolution/YResolution into 'resolution'
