@@ -1,0 +1,6 @@
+MANIFEST
+Makefile.PL
+jfifdump
+Exif.pm
+lib/Image/TIFF.pm
+lib/Image/TIFF/Exif.pm
