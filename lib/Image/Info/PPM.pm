@@ -59,7 +59,7 @@ sub process_file
 	$info->push_info(0, "resolution", "1/1");
 	if ($type eq "ppm") {
 	    $info->push_info(0, "color_type", "RGB");
-	    $info->push_info(0, "SamlesPerPixel", 3);
+	    $info->push_info(0, "SamplesPerPixel", 3);
 	    if ($binary) {
 		for (1..3) {
 		    $info->push_info(0, "BitsPerSample", 8);
@@ -68,7 +68,7 @@ sub process_file
 	}
 	else {
 	    $info->push_info(0, "color_type", "Gray");
-	    $info->push_info(0, "SamlesPerPixel", 1);
+	    $info->push_info(0, "SamplesPerPixel", 1);
 	    $info->push_info(0, "BitsPerSample", ($type eq "pbm") ? 1 : 8)
 		if $binary;
 	}
