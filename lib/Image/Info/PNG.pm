@@ -77,6 +77,14 @@ sub process_file
 	    $info->push_info(0, "Interlace", $interlace)
 		if $interlace;
 	}
+	elsif ($type eq "PLTE") {
+	    my @table;
+	    while (length $data) {
+		push(@table, sprintf("#%02x%02x%02x",
+				     unpack("C3", substr($data, 0, 3, ""))));
+	    }
+	    $info->push_info(0, "RGB_Palette" => \@table);
+	}
 	elsif ($type eq "gAMA" && $len == 4) {
 	    $info->push_info(0, "Gamma", unpack("N", $data)/100_000);
 	}
