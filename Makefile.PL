@@ -79,7 +79,7 @@ WriteMakefile(
     AUTHOR       => 'Gisle Aas <gisle@ActiveState.com',
     VERSION_FROM => $info_pm,
     PREREQ_PM    => {
-                      ($] < 5.008 ? ('IO::String' => 1) : ()),
+                      ($] < 5.008 ? ('IO::String' => 1.03) : ()),
                     },
     clean        => { FILES => $info_pm },
     dist         => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
