@@ -5,7 +5,7 @@ print "1..2\n";
 use strict;
 use Image::Info qw(image_info);
 
-my $h = image_info("tiny.pgm");
+my $h = image_info("img/tiny.pgm");
 
 # use Data::Dump; Data::Dump::dump($h);
 

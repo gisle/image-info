@@ -5,6 +5,17 @@ Makefile.PL
 README
 exifdump			Test driver script
 imgdump				Test driver script
+img/test.gif			An GIF example
+img/test.jpg			An Exif example from my Digicam
+img/test.pbm
+img/test.pgm
+img/test.png			An PNG example
+img/test.ppm
+img/test.rle
+img/test.svg
+img/test.xbm
+img/test.xpm
+img/tiny.pgm
 lib/Image/Info/BMP.pm
 lib/Image/Info/GIF.pm
 lib/Image/Info/JPEG.pm
@@ -22,14 +33,3 @@ t/exif.t
 t/png.t
 t/string.t
 t/tiny-pgm.t
-test.gif			An GIF example
-test.jpg			An Exif example from my Digicam
-test.pbm
-test.pgm
-test.png			An PNG example
-test.ppm
-test.rle
-test.svg
-test.xbm
-test.xpm
-tiny.pgm
