@@ -90,7 +90,7 @@ sub dim
 {
     my $img = shift || return;
     my $x = $img->{ImageWidth} || return;
-    my $y = $img->{ImageLength} || return;
+    my $y = $img->{ImageHeight} || return;
     wantarray ? ($x, $y) : "$x×$y";
 }
 
@@ -121,3 +121,98 @@ sub clean_up
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Image::Info - Extract information from image files
+
+=head1 SYNOPSIS
+
+ use Image::Info qw(image_info dim);
+
+ my $info = image_info("image.jpg");
+
+=head1 DESCRIPTION
+
+This module provide functions to extract various information from
+image files.  The following functions are provided:
+
+=over
+
+=item image_info( $file, %options )
+
+This function takes the name of a file or a file handle as argument
+and will return one or more hashes describing the images inside the
+file.  If there is only one image in the file only one hash is
+returned.  In scalar context, only the hash for the first image is
+returned.
+
+In case of error, and hash containing the "Error" key will be
+returned.
+
+=item dim( $info_hash )
+
+Takes an hash as returned from image_info() and returns the dimensions
+($width, $height) of the image.  In scalar context returns the
+dimensions as a string.
+
+=item html_dim( $info_hash )
+
+Returns the dimensions as a string suitable for embedding into HTML
+tags like <img src="...">.
+
+=back
+
+=head1 Image descriptions
+
+The image_info() function return information about an image as a hash.
+The key values that can occur is based on the TIFF names.
+
+The following names is common for any image format:
+
+=over
+
+=item FileMediaType
+
+=item FileExt
+
+=item ImageWidth
+
+=item ImageHeight
+
+=item ColorType
+
+=item PixelsPerSample
+
+=item BitsPerSample
+
+=item Resolution
+
+=item ResolutionUnit
+
+=item XResolution
+
+=item YResolution
+
+=item Comment
+
+=item Interlace
+
+=item Compression
+
+=back
+
+=head1 SEE ALSO
+
+L<Image::Size>
+
+=head1 AUTHOR
+
+Copyright 1999 Gisle Aas.
+
+This library is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+=cut
