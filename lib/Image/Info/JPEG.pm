@@ -81,7 +81,7 @@ sub process_chunk
 	    $info->push_info($img_no, "color_type" => "Gray");
 	}
 	elsif ($num_comp == 3) {
-	    $info->push_info($img_no, "color_type" => "RGB");  # or YCbCr??
+	    $info->push_info($img_no, "color_type" => "YCbCr");  # or RGB ?
 	}
 	elsif ($num_comp == 4) {
 	    $info->push_info($img_no, "color_type" => "CMYK");  # or YCCK ?
@@ -91,6 +91,13 @@ sub process_chunk
 	    while (length($data)) {
 		my($comp_id, $hv, $qtable) =
 		    unpack("CCC", substr($data, 0, 3, ""));
+		$comp_id = { 1 => "Y",
+			     2 => "Cb",
+			     3 => "Cr",
+			     82 => "R",
+			     71 => "G",
+			     66 => "B",
+			   }->{$comp_id} || $comp_id;
 		$info->push_info(0, "ColorComponents", [$comp_id, $hv, $qtable]);
 	    }
 	}
