@@ -10,5 +10,5 @@ print "not " unless $i->{DateTimeDigitized} eq "1999:12:06 16:38:40" &&
                     $i->{Make} eq "OLYMPUS OPTICAL CO.,LTD";
 print "ok 1\n";
 
-print "not " unless dim($i) eq "640×480";
+print "not " unless dim($i) eq "640x480";
 print "ok 2\n";
