@@ -1,5 +1,13 @@
 2003-10-06   Gisle Aas <gisle@ActiveState.com>
 
+    Release 1.14
+
+    Support TIFF/Exif GPS tags.
+
+
+
+2003-10-06   Gisle Aas <gisle@ActiveState.com>
+
     Release 1.13
 
     The module reported the SamplesPerPixel field as SamlesPerPixel
