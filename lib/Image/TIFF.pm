@@ -4,18 +4,18 @@ use strict;
 
 my @types = (
   undef,
-  [ "BYTE",      "C1",  1],
-  [ "ASCII",     "A1",  1],
-  [ "SHORT",     "n1",  2],
-  [ "LONG",      "N1",  4],
+  [ "BYTE",      "C1", 1],
+  [ "ASCII",     "A1", 1],
+  [ "SHORT",     "n1", 2],
+  [ "LONG",      "N1", 4],
   [ "RATIONAL",  "N2", 8],
-  [ "SBYTE",     "c1",  1],
-  [ "UNDEFINE",  "a1",  1],
-  [ "SSHORT",    "n1",  2],
-  [ "SLONG",     "N1",  4],
+  [ "SBYTE",     "c1", 1],
+  [ "UNDEFINE",  "a1", 1],
+  [ "SSHORT",    "n1", 2],
+  [ "SLONG",     "N1", 4],
   [ "SRATIONAL", "N2", 8],
-  [ "FLOAT",     "f1",  4],
-  [ "DOUBLE",    "d1",  8],
+  [ "FLOAT",     "f1", 4],
+  [ "DOUBLE",    "d1", 8],
 );
 
 my %tags = (
