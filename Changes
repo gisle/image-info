@@ -1,3 +1,20 @@
+2000-01-04   Gisle Aas <gisle@aas.no>
+
+    Release 0.04
+
+    Renaming of keys for things that are common across file
+    formats.  Common things now use lowercase keys.
+
+    Better support for JPEG JFXX chunks
+
+    Better determination of color_type for JPEG
+
+    Partial support for App14-Adobe chunks in JPEG
+
+    Support sBIT chunks for PNG
+
+
+
 1999-12-25   Gisle Aas <gisle@aas.no>
 
     Release 0.03
