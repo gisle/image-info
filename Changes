@@ -1,3 +1,41 @@
+2001-03-24   Gisle Aas <gisle@ActiveState.com>
+
+    Release 0.06
+
+    Decoding of Exif MakerNote info from Jay Soffian <jay@loudcloud.com>.
+    His patch supports the following camera models:
+
+       NIKON E700  
+       NIKON E800  
+       NIKON E900  
+       NIKON E900S 
+       NIKON E910  
+       NIKON E950  
+       NIKON E880  
+       NIKON E990  
+       NIKON CORPORATION NIKON D1  
+       OLYMPUS OPTICAL CO.,LTD C2000Z  
+       OLYMPUS OPTICAL CO.,LTD C2100UZ 
+       OLYMPUS OPTICAL CO.,LTD C2500L  
+       OLYMPUS OPTICAL CO.,LTD C3030Z  
+       OLYMPUS OPTICAL CO.,LTD E-10    
+       FUJIFILM FinePix4900ZOOM  
+       FUJIFILM FinePix40i       
+       FUJIFILM FinePix4700 ZOOM 
+       FUJIFILM FinePixS1Pro     
+       CASIO QV-3000EX  
+       Canon Canon EOS D30            
+       Canon Canon DIGITAL IXUS       
+       Canon Canon DIGITAL IXUS 300   
+       Canon Canon PowerShot G1 
+       Canon Canon PowerShot Pro90 IS
+       Canon Canon PowerShot S10
+       Canon Canon PowerShot S20
+
+    Included Jay Soffian's test program called 'exifdump'
+
+
+
 2000-08-24   Gisle Aas <gisle@ActiveState.com>
 
     Release 0.05
