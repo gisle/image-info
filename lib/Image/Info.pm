@@ -128,6 +128,11 @@ __END__
 
 Image::Info - Extract information from image files
 
+=head1 NOTE
+
+This is an B<alpha release> of the C<Image::Info> module.  The
+interface to the routines described below is likely to change.
+
 =head1 SYNOPSIS
 
  use Image::Info qw(image_info dim);
@@ -208,9 +213,10 @@ encode.  The value can be one of the following:
   CIELab
 
 These names can also be prefixed by "Indexed-" if the image is
-composed of indexes into a palette.
+composed of indexes into a palette.  Of these, only "Indexed-RGB" is
+likely to occur.
 
-It is simplar to the TIFF field PhotometricInterpretation, but this
+It is similar to the TIFF field PhotometricInterpretation, but this
 name was found to be to long, so we used the PNG term instead :-)
 
 =item SamplesPerPixel
@@ -225,6 +231,9 @@ This says how many bits are used to encode each of samples.  The
 number of numbers here should be the same as C<SamplesPerPixel>.
 
 =item Resolution
+
+This field is used when XResolution and YResolution is the same, which
+they normally are.
 
 =item ResolutionUnit
 
@@ -247,7 +256,7 @@ used.
 
 =item Compression
 
-This tell which compression algoritm is used.
+This tell which compression algorithm is used.
 
 =back
 
@@ -259,11 +268,27 @@ The following image file formats are supported:
 
 =item JPEG
 
-JFIF and Exif
+For JPEG files we extract information both from C<JFIF> and C<Exif>
+application chunks.
+
+C<Exif> is the file format written by most digital cameras.  This
+encode things like timestamp, camera model, focal length, exposure
+time, aperture, flash usage, GPS position, etc.
 
 =item PNG
 
+Information from IHDR, PLTE, gAMA, tEXt, tIME chunks are extracted.
+The sequence of chunks are also given by the C<PNG_Chunks> key.
+
 =item GIF
+
+Both GIF87a and GIF89a are supported and the version number is found
+as C<GIF_Version> for the first image.  GIF files can contain multiple
+images, and information for all images will be returned if
+image_info() is called in list context.  The Netscape-2.0 extention to
+loop animation sequences is represented by the C<GIF_Loop> key for the
+first image.  The value is either "forever" or a number indicating
+loop count.
 
 =back
 
