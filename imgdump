@@ -3,10 +3,11 @@
 use lib "./lib";
 
 use strict;
-use Image::Info;
-
-my $img = Image::Info->new(shift || die "Usage: $0 <img>\n") || die "$!";
-
+use Image::Info qw(image_info);
 use Data::Dump;
-Data::Dump::dump($img);
+
+while (@ARGV) {
+    print Data::Dump::dump(image_info(shift)), "\n";
+}
+
 

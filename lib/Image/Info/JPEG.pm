@@ -6,7 +6,6 @@ package Image::Info::JPEG;
 # modify it under the same terms as Perl itself.
 
 use strict;
-use base 'Image::Info';
 
 my %sof = (
    0xC0 => "Baseline",
@@ -34,11 +33,9 @@ sub my_read
     $buf;
 }
 
-
-sub new
+sub process_file
 {
-    my($class, $fh) = @_;
-    my $self = bless {}, $class;
+    my($info, $fh) = @_;
 
     my $soi = my_read($fh, 2);
     die "SOI missing" unless $soi eq "\xFF\xD8";
@@ -48,26 +45,25 @@ sub new
         last if $ff != 0xFF;
         last if $mark == 0xDA || $mark == 0xD9;  # SOS/EOI
 	last if $len < 2;
-        $self->process_chunk($mark, my_read($fh, $len - 2));
+        process_chunk($info, $mark, my_read($fh, $len - 2));
     }
-    $self;
 }
 
 sub process_chunk
 {
-    my($self, $mark, $data) = @_;
+    my($info, $mark, $data) = @_;
     #printf "MARK 0x%02X, len=%d\n", $mark, length($data);
 
     if ($mark == 0xFE) {
-        $self->push_info(0, Comment => $data);
+        $info->push_info(0, Comment => $data);
     }
     elsif ($sof{$mark}) {
         my($precision, $height, $width, $num_comp) =
             unpack("CnnC", substr($data, 0, 6, ""));
-	$self->push_info(0, "ImageType", "JPEG ". $sof{$mark});
-	$self->push_info(0, "ImageWidth", $width);
-	$self->push_info(0, "ImageLength", $height);
-        $self->push_info(0, "Precision", "$num_comp x $precision");
+	$info->push_info(0, "ImageType", "JPEG ". $sof{$mark});
+	$info->push_info(0, "ImageWidth", $width);
+	$info->push_info(0, "ImageLength", $height);
+        $info->push_info(0, "Precision", "$num_comp x $precision");
 =for comment
         my $i = 1;
         while (length($data)) {
@@ -83,43 +79,43 @@ sub process_chunk
 
     }
     elsif ($mark >= 0xE0 && $mark <= 0xEF) {
-        $self->process_app($mark, $data);
+        process_app($info, $mark, $data);
     }
 }
 
 sub process_app
 {
-    my($self, $mark, $data) = @_;
+    my($info, $mark, $data) = @_;
     my $app = $mark - 0xE0;
     my $id = substr($data, 0, 5, "");
-    #$self->push_info(0, "Debug", "APP$app $id");
+    #$info->push_info(0, "Debug", "APP$app $id");
     $id = "$app-$id";
     if ($id eq "0-JFIF\0") {
-	$self->process_app0_jfif($data);
+	process_app0_jfif($info, $data);
     }
     elsif ($id eq "0-JFXX\0") {
-	$self->process_app0_jfxx($data);
+	process_app0_jfxx($info, $data);
     }
     elsif ($id eq "1-Exif\0") {
-	$self->process_app1_exif($data);
+	process_app1_exif($info, $data);
     }
     else {
-	$self->push_info(0, "App$id", $data);
+	$info->push_info(0, "App$id", $data);
 	#printf "  %s\n", Data::Dump::dump($data);
     }
 }
 
 sub process_app0_jfif
 {
-    my($self, $data) = @_;
+    my($info, $data) = @_;
     if (length $data < 9) {
-	$self->push_info(0, "Debug", "Short JFIF chunk");
+	$info->push_info(0, "Debug", "Short JFIF chunk");
 	return;
     }
     my($ver_hi, $ver_lo, $units, $x_density, $y_density, $x_thumb, $y_thumb) =
 	unpack("CC C nn CC", substr($data, 0, 9, ""));
-    $self->push_info(0, "JFIF_Version", sprintf("%d.%02d", $ver_hi, $ver_lo));
-    $self->push_info(0, "JFIF_Density",
+    $info->push_info(0, "JFIF_Version", sprintf("%d.%02d", $ver_hi, $ver_lo));
+    $info->push_info(0, "JFIF_Density",
 		     sprintf("%dx%d %s", $x_density, $y_density,
 			     { 0 => "pixels",
 			       1 => "dpi",
@@ -127,17 +123,17 @@ sub process_app0_jfif
 			     }->{$units} || "(unit $units)"
 			    ));
     if ($x_thumb || $y_thumb) {
-	$self->push_info(1, "ImageWidth", $x_thumb);
-	$self->push_info(1, "ImageLength", $y_thumb);
-	$self->push_info(1, "ByteCount", length($data));
+	$info->push_info(1, "ImageWidth", $x_thumb);
+	$info->push_info(1, "ImageLength", $y_thumb);
+	$info->push_info(1, "ByteCount", length($data));
     }
 }
 
 sub process_app0_jfxx
 {
-    my($self, $data) = @_;
+    my($info, $data) = @_;
     my($code) = ord(substr($data, 0, 1, ""));
-    $self->push_info(1, "ImageType",
+    $info->push_info(1, "ImageType",
 		     { 0x10 => "JPEG thumbnail",
 		       0x11 => "Bitmap thumbnail",
 		       0x13 => "RGB thumbnail",
@@ -146,10 +142,10 @@ sub process_app0_jfxx
 
 sub process_app1_exif
 {
-    my($self, $data) = @_;
+    my($info, $data) = @_;
     my $null = substr($data, 0, 1, "");
     if ($null ne "\0") {
-	$self->push_info(0, "Debug", "Exif chunk does not start with \\0");
+	$info->push_info(0, "Debug", "Exif chunk does not start with \\0");
 	return;
     }
 
@@ -159,7 +155,7 @@ sub process_app1_exif
     for my $i (0 .. $t->num_ifds - 1) {
 	my $ifd = $t->ifd($i);
 	for (@$ifd) {
-	    $self->push_info($i, $_->[0], $_->[3]);
+	    $info->push_info($i, $_->[0], $_->[3]);
 	}
     }
 

@@ -19,10 +19,9 @@ sub my_read
 }
 
 
-sub new
+sub process_file
 {
-    my($class, $fh) = @_;
-    my $self = bless {}, $class;
+    my($info, $fh) = @_;
 
     my $signature = my_read($fh, 8);
     die "Bad PNG signature"
@@ -30,7 +29,7 @@ sub new
 
     while (1) {
         my($len, $type) = unpack("Na4", my_read($fh, 8));
-        $self->push_info(0, "Chunk", $type) unless $type eq "IDAT";
+        $info->push_info(0, "PNG_Chunks", $type) unless $type eq "IDAT";
         last if $type eq "IEND";
         my $data = my_read($fh, $len + 4);
 	my $crc = unpack("N", substr($data, -4, 4, ""));
@@ -49,30 +48,29 @@ sub new
 	    $filter = "Adaptive" if $filter == 0;
 	    $interlace = "Adam7" if $interlace == 1;
 
-	    $self->push_info(0, "ImageWidth", $w);
-	    $self->push_info(0, "ImageLength", $h);
-	    $self->push_info(0, "BitDepth", $depth);
-	    $self->push_info(0, "ColorType", $ctype);
-	    $self->push_info(0, "Compression", $compression);
-	    $self->push_info(0, "Filter", $filter);
-	    $self->push_info(0, "Interlace", $interlace);
+	    $info->push_info(0, "ImageWidth", $w);
+	    $info->push_info(0, "ImageLength", $h);
+	    $info->push_info(0, "BitDepth", $depth);
+	    $info->push_info(0, "ColorType", $ctype);
+	    $info->push_info(0, "Compression", $compression);
+	    $info->push_info(0, "Filter", $filter);
+	    $info->push_info(0, "Interlace", $interlace);
 	}
 	elsif ($type eq "gAMA" && $len == 4) {
-	    $self->push_info(0, "Gamma", unpack("N", $data)/100_000);
+	    $info->push_info(0, "Gamma", unpack("N", $data)/100_000);
 	}
 	elsif ($type eq "tEXt") {
 	    my($key, $val) = split(/\0/, $data, 2);
 	    # XXX should make sure $key is not in conflict with any
 	    # other key we might generate
-	    $self->push_info(0, $key, $val);
+	    $info->push_info(0, $key, $val);
 	}
 	elsif ($type eq "tIME" && $len == 7) {
-	    $self->push_info(0, "DateTime",
+	    $info->push_info(0, "DateTime",
 			     sprintf("%04d-%02d-%02d %02d:%02d:%02d",
 				     unpack("nC5", $data)));
 	}
     }
-    $self;
 }
 
 1;
