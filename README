@@ -3,7 +3,7 @@
 
 This Perl extention allows you to extract information from various
 image files.  In this alpha release we only support JPEG (plain JFIF
-and Exif) and PNG.  Usage is something like this:
+and Exif), PNG and GIF.  Usage is something like this:
 
    use Image::Info qw(image_info);
 
