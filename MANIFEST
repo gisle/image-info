@@ -2,11 +2,14 @@ Changes
 MANIFEST
 Makefile.PL
 README
-jfifdump		List header content of a JFIF file (JPEG)
-imgdump
+imgdump			Test driver script
 test.jpg		An Exif example from my Digicam
+test.png		An PNG example
 lib/Image/Info.pm
+lib/Image/Info/GIF.pm
 lib/Image/Info/JPEG.pm
 lib/Image/Info/PNG.pm
 lib/Image/TIFF.pm	Parse TIFF tags
 lib/Image/TIFF/Exif.pm	Subclass that also knows about Exif tags
+t/exif.t
+t/png.t
