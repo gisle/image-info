@@ -1,5 +1,8 @@
 #!perl -w
 
+print "1..2\n";
+
+use strict;
 use Image::Info qw(image_info);
 
 my $h = image_info("tiny.pgm");
