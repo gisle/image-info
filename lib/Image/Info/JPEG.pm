@@ -35,50 +35,51 @@ sub my_read
 
 sub process_file
 {
-    my($info, $fh) = @_;
+    my($info, $fh, $img_no) = @_;
+    $img_no ||= 0;
 
     my $soi = my_read($fh, 2);
     die "SOI missing" unless $soi eq "\xFF\xD8";
 
-    $info->push_info(0, "file_media_type" => "image/jpeg");
-    $info->push_info(0, "file_ext" => "jpg");
+    $info->push_info($img_no, "file_media_type" => "image/jpeg");
+    $info->push_info($img_no, "file_ext" => "jpg");
 
     while (1) {
         my($ff, $mark, $len) = unpack("CCn", my_read($fh, 4));
         last if $ff != 0xFF;
         last if $mark == 0xDA || $mark == 0xD9;  # SOS/EOI
 	last if $len < 2;
-        process_chunk($info, $mark, my_read($fh, $len - 2));
+        process_chunk($info, $img_no, $mark, my_read($fh, $len - 2));
     }
 }
 
 sub process_chunk
 {
-    my($info, $mark, $data) = @_;
+    my($info, $img_no, $mark, $data) = @_;
     #printf "MARK 0x%02X, len=%d\n", $mark, length($data);
 
     if ($mark == 0xFE) {
-        $info->push_info(0, Comment => $data);
+        $info->push_info($img_no, Comment => $data);
     }
     elsif ($mark >= 0xE0 && $mark <= 0xEF) {
-        process_app($info, $mark, $data);
+        process_app($info, $mark, $data) if $img_no == 0;
     }
     elsif ($sof{$mark}) {
         my($precision, $height, $width, $num_comp) =
             unpack("CnnC", substr($data, 0, 6, ""));
-	$info->push_info(0, "JPEG_Type", $sof{$mark});
-	$info->push_info(0, "width", $width);
-	$info->push_info(0, "height", $height);
+	$info->push_info($img_no, "JPEG_Type", $sof{$mark});
+	$info->push_info($img_no, "width", $width);
+	$info->push_info($img_no, "height", $height);
 
 	for (1..$num_comp) {
-	    $info->push_info(0, "BitsPerSample", $precision);
+	    $info->push_info($img_no, "BitsPerSample", $precision);
 	}
-	$info->push_info(0, "SamplesPerPixel" => $num_comp);
+	$info->push_info($img_no, "SamplesPerPixel" => $num_comp);
 	if ($num_comp == 1) {
-	    $info->push_info(0, "ColorType" => "Gray");
+	    $info->push_info($img_no, "ColorType" => "Gray");
 	}
 	elsif ($num_comp == 3) {
-	    $info->push_info(0, "color_type" => "RGB");  # or YCC??
+	    $info->push_info($img_no, "color_type" => "RGB");  # or YCC??
 	}
 
 	if (0) {
@@ -152,6 +153,15 @@ sub process_app0_jfxx
 		       0x11 => "Bitmap thumbnail",
 		       0x13 => "RGB thumbnail",
 		     }->{$code} || "Unknown extention code $code");
+
+    if ($code == 0x10) {
+	eval {
+	    require IO::String;
+	    my $thumb_fh = IO::String->new($data);
+	    process_file($info, $thumb_fh, 1);
+	};
+	$info->push_info(1, "error" => $@) if $@;
+    }
 }
 
 sub process_app1_exif
