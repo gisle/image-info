@@ -172,6 +172,12 @@ sub process_app1_exif
 	    $info->push_info($i, $_->[0], $_->[3]);
 	}
     }
+
+    # XXX Should move XResolution/YResolution into 'resolution'
+
+    # XXX If we find JPEGInterchangeFormat/JPEGInterchangeFormatLngth,
+    # then we should apply process_file kind of recusively to extract
+    # information of this (thumbnail) image file...
 }
 
 1;
