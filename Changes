@@ -1,0 +1,258 @@
+2001-12-14   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.09
+
+    Use File::Spec in Makefile.PL to improve portability.
+    Patch by Chris Nandor <pudge@pobox.com>.
+
+    Extended support for decoding of maker specific tags
+    for Nikon E995 and Olympus 3040Z.
+
+    TIFF support contributed by <clarsen@emf.net>.
+
+    Decoding of JPEG color components by <tkil@scrye.com>.
+
+
+
+2001-08-24   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.08
+
+    The html_dim() function did not work at all.
+    Patch by Hans-Georg <hgf@berlin.snafu.de>.
+
+    Removed ASCII image support.
+
+    TIFF rational numbers are now blessed and use overloading to
+    convert themselves to strings and numbers in a more sensible way.
+    They are still references to arrays containing 2 numbers.
+
+    GIF global color table reading fix.
+    Patch by Tom Hargreaves <admin@traderwebs.co.uk>.
+
+    Support for zTXt chunks in PNG.  This only works when the Compress::Zlib
+    module is available.  Contributed by Chip Marshall <chip@setzer.chocobo.cx>
+
+    Updated Exif URIs in documentation
+
+
+
+2001-04-10   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.07
+
+    Image::Info::BMP should not use architecture-dependent
+    unpack descriptors.  Fix by <Jost.Krieger@ruhr-uni-bochum.de>.
+
+
+
+2001-03-26   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.06
+
+    Avoid using sysread in Image::Info::BMP.  Avoids failures because
+    of mixing of hi- and low-level file reading operations.
+
+
+
+2001-03-24   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.05
+
+    Exif MakerNote decoding implemented by Jay Soffian <jay@loudcloud.com>.
+    His patch support the following camera models:
+
+       NIKON E700
+       NIKON E800
+       NIKON E900
+       NIKON E900S
+       NIKON E910
+       NIKON E950
+       NIKON E880
+       NIKON E990
+       NIKON CORPORATION NIKON D1
+       OLYMPUS OPTICAL CO.,LTD C2000Z
+       OLYMPUS OPTICAL CO.,LTD C2100UZ
+       OLYMPUS OPTICAL CO.,LTD C2500L
+       OLYMPUS OPTICAL CO.,LTD C3030Z
+       OLYMPUS OPTICAL CO.,LTD E-10
+       FUJIFILM FinePix4900ZOOM
+       FUJIFILM FinePix40i
+       FUJIFILM FinePix4700 ZOOM
+       FUJIFILM FinePixS1Pro
+       CASIO QV-3000EX
+       Canon Canon EOS D30
+       Canon Canon DIGITAL IXUS
+       Canon Canon DIGITAL IXUS 300
+       Canon Canon PowerShot G1
+       Canon Canon PowerShot Pro90 IS
+       Canon Canon PowerShot S10
+       Canon Canon PowerShot S20
+
+    Jay's exifdump program included.
+
+
+
+2000-11-30   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.04
+
+    Allow extra image_info() arguments to pass through to the
+    image format handlers.  This make the histogram and
+    color palette returns functional again.
+
+    Distribute a copy of lib/Image/Info.pm so that search.cpan.org
+    finds it.
+
+
+
+2000-11-13   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.03
+
+    Support for even more image formats added by Jerrad Pierce:
+
+       - Added support for ASCII and BMP/DIB/RLE
+
+       - Palettes are only returned if requested (see documentation)
+
+       - Added Luminance Histogram for ASCII, XBM, XPM
+
+
+
+2000-11-10   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.02
+
+    Avoid direct hardcoding of image file magic and doc by
+    generating lib/Image/Info.pm in Makefile.PL
+
+    XBM/XPM/SVG support contributed by
+    Jerrad Pierce <belg4mit@mit.edu>/<webmaster@pthbb.org>
+
+
+
+
+2000-10-31   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.01
+
+    GIF parsing fixes from Ralf Steines <metamonk@yahoo.com>:
+
+      - GIF 'DisposalMethod' and 'UserInput' now show proper values.
+
+      - GIF 'TransparencyIndex' now appears in the info hash.
+
+      - GIF anims with local color tables don't fail anymore
+        (table size calculation bug).
+
+      - Added: GIFs marked as 87a which contain graphics control
+        extension blocks don't fail anymore, GIF is parsed anyway
+        but $info->{warn} contains 'GIF 89a extensions in 87a'.
+
+
+
+2000-10-18   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.00
+
+    IO::String is now a PREREQ module.
+
+    Added PPM/PGM/PBM support
+
+    Improved documentation.
+
+    Standardized on how "resolution" is expressed.  The field in
+    now mandatory.
+
+    All comments are now found as "Comment" tag.
+
+    Pick up data about thumbnails embedded in JPEG Exif files.
+
+
+
+2000-08-24   Gisle Aas <gisle@ActiveState.com>
+
+    Release 0.05
+
+    Passing a reference to a scalar as argument to img_info()
+    indicates that this scalar contains raw image data.  If you
+    want to use this feature, you need to install the IO::String
+    module first.
+
+
+
+2000-01-04   Gisle Aas <gisle@aas.no>
+
+    Release 0.04
+
+    Renaming of keys for things that are common across file
+    formats.  Common things now use lowercase keys.
+
+    Better support for JPEG JFXX chunks
+
+    Better determination of color_type for JPEG
+
+    Partial support for App14-Adobe chunks in JPEG
+
+    Support sBIT chunks for PNG
+
+
+
+1999-12-25   Gisle Aas <gisle@aas.no>
+
+    Release 0.03
+
+    Eliminated Image::TIFF::Exif.  The TIFF module now knows about
+    the Exif tags by itself.
+
+    Errors are returned as a hash too.
+
+    Start on Image::Info POD
+
+    Various tweaks to the reported info keys for JPEG/PNG/GIF.
+
+    Support Netscape's Loop extention to GIF.
+
+    Support ColorTable dump for GIF and PNG.
+
+    Support FileMediaType/FileExt for all image formats.
+
+    Report number of repeated chunks in PNG_Chunks values.
+
+
+
+1999-12-22   Gisle Aas <gisle@aas.no>
+
+    Release 0.02
+
+    Removed external OO interface.  The main interface is now
+    an plain function called image_info() that returns one or
+    more hashes.  One hash per image found in the file.
+
+    Exif/TIFF integer that are codes representing something else
+    are now expaned.
+
+    TIFF Rational values are reduced to plain integers when
+    possible.
+
+    Added GIF support
+
+    Added some test scripts
+
+
+1999-12-19   Gisle Aas <gisle@aas.no>
+
+    Release 0.01 (now Image-Info)
+
+    New common framwork that can support many image formats.
+
+    Added JPEG support
+
+    Added PNG support
+
+
+
+1999-12-14   Gisle Aas <gisle@aas.no>
+
+    First try, released as Image-Exif-0.01

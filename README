@@ -1,0 +1,36 @@
+This Perl extention allows you to extract meta information from
+various types of image files.  In this release the following file
+formats are supported:
+
+   JPEG (plain JFIF and Exif)
+   PNG
+   GIF
+   PBM/PGM/PPM
+   SVG
+   XBM/XPM
+   BMP/DIB/RLE
+
+Usage is something like this:
+
+   use Image::Info qw(image_info);
+
+   @info = image_info("filename");
+   $refto_hash_describing_1st_image = $info[0];
+   $refto_hash_describing_2nd_image = $info[1];
+
+TODO:
+   - add support for more image formats
+   - rational class
+   - Image::TIFF should not need to slurp
+
+
+Copyright 1999-2001 Gisle Aas.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+The Exif code is written based on TsuruZoh Tachibanaya's "Description
+of Exif file format" and Thierry Bousch's Python module 'exifdump.py'
+
+   http://www.butaman.ne.jp/~tsuruzoh/Computer/Digicams/exif-e.html
+   http://topo.math.u-psud.fr/~bousch/exifdump.py

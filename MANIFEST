@@ -1,0 +1,33 @@
+Changes
+Info.pm.tmpl			Will become lib/Image/Info.pm
+MANIFEST
+Makefile.PL
+README
+exifdump			Test driver script
+imgdump				Test driver script
+lib/Image/Info/BMP.pm
+lib/Image/Info/GIF.pm
+lib/Image/Info/JPEG.pm
+lib/Image/Info/PNG.pm
+lib/Image/Info/PPM.pm
+lib/Image/Info/SVG.pm
+lib/Image/Info/XBM.pm
+lib/Image/Info/XPM.pm
+lib/Image/Info.pm
+lib/Image/TIFF.pm		Parse TIFF tags
+t/bmp.t
+t/dim.t
+t/exif.t
+t/png.t
+t/string.t
+test.gif			An GIF example
+test.jpg			An Exif example from my Digicam
+test.pbm
+test.pgm
+test.png			An PNG example
+test.ppm
+test.rle
+test.svg
+test.txt
+test.xbm
+test.xpm
