@@ -10,6 +10,5 @@ lib/Image/Info/GIF.pm
 lib/Image/Info/JPEG.pm
 lib/Image/Info/PNG.pm
 lib/Image/TIFF.pm	Parse TIFF tags
-lib/Image/TIFF/Exif.pm	Subclass that also knows about Exif tags
 t/exif.t
 t/png.t
