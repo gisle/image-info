@@ -11,8 +11,6 @@ http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf
 Also good writeup on exif spec at:
 http://www.ba.wakwak.com/~tsuruzoh/Computer/Digicams/exif-e.html
 
-=item TIFF
-
 =end register
 
 =cut
