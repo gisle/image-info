@@ -23,6 +23,10 @@ for my $file (@tests) {
 
     my $h1 = image_info($file);
 
+    if (my $err = $h1->{error}) {
+	print "# - $err\n";
+    }
+
     my $img = cat($file);
     my $h2 = image_info(\$img);
 
