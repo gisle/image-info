@@ -2,6 +2,7 @@ Changes
 MANIFEST
 Makefile.PL
 README
+exifdump		Test driver script
 imgdump			Test driver script
 test.jpg		An Exif example from my Digicam
 test.png		An PNG example

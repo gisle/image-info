@@ -26,6 +26,164 @@ my @types = (
   [ "DOUBLE",    "d1", 8],  # XXX 8-byte IEEE format
 );
 
+my %nikon1_tags = (
+    0x0003 => "Quality",
+    0x0004 => "ColorMode",
+    0x0005 => "ImageAdjustment",
+    0x0006 => "CCDSensitivity",
+    0x0007 => "Whitebalance",
+    0x0008 => "Focus",
+    0x000A => "DigitalZoom",
+    0x000B => "Converter",
+);
+
+my %nikon2_tags = (
+    0x0002 => "ISOSetting",
+    0x0003 => "ColorMode",
+    0x0004 => "Quality",
+    0x0005 => "Whitebalance",
+    0x0006 => "ImageSharpening",
+    0x0007 => "FocusMode",
+    0x0008 => "FlashSetting",
+    0x000F => "ISOSelection",
+    0x0080 => "ImageAdjustment",
+    0x0082 => "AuxiliaryLens",
+    0x0085 => "ManualFocusDistance",
+    0x0086 => "DigitalZoom",
+    0x0088 => { __TAG__ => "AFFocusPosition",
+                pack("xCxx",0) => "Center",
+                pack("xCxx",1) => "Top",
+                pack("xCxx",2) => "Bottom",
+                pack("xCxx",3) => "Left",
+                pack("xCxx",4) => "Right",
+              },
+    0x0010 => "DataDump",
+);
+
+my %olympus_tags = (
+    0x0200 => "SpecialMode",
+    0x0201 => { __TAG__ => "JpegQual", 1 => "SQ", 2 => "HQ", 3 => "SHQ" },
+    0x0202 => { __TAG__ => "Macro", 0 => "Normal", 1 => "Macro" },
+    0x0204 => "DigiZoom",
+    0x0207 => "SoftwareRelease",
+    0x0208 => "PictInfo",
+    0x0209 => "CameraID",
+    0x0f00 => "DataDump",
+);
+
+my %fujifilm_tags = (
+    0x0000 => "Version",
+    0x1000 => "Quality",
+    0x1001 => { __TAG__ => "Sharpness", 
+                1 => "Very Soft",
+                2 => "Soft",
+                3 => "Normal",
+                4 => "Hard",
+                5 => "Very Hard",
+              },
+    0x1002 => { __TAG__ => "WhiteBalance",
+                0    => "Auto",
+                256  => "Daylight",
+                512  => "Cloudy",
+                768  => "DaylightColor-fluorescence",
+                769  => "DaywhiteColor-fluorescence",
+                770  => "White-fluorescence",
+                1024 => "Incandenscense",
+                3840 => "Custom white balance",
+              },
+    0x1003 => { __TAG__ => "Color", 0 => "Normal", 256 => "High", 512 => "Low" },
+    0x1004 => { __TAG__ => "Tone" , 0 => "Normal", 256 => "High", 512 => "Low" },
+    0x1010 => { __TAG__ => "FlashMode", 0 => "Auto", 1 => "On", 2 => "Off", 3 => "Red-eye reduction" },
+    0x1011 => "FlashStrength",
+    0x1020 => { __TAG__ => "Macro", 0 => "Off", 1 => "On"},
+    0x1021 => { __TAG__ => "FocusMode", 0 => "Auto", 1 => "Manual" },
+    0x1030 => { __TAG__ => "SlowSync", 0 => "Off", 1 => "On"},
+    0x1031 => { __TAG__ => "PictureMode",
+                0   => "Auto",
+                1   => "Portrait",
+                2   => "Landscape",
+                4   => "Sports",
+                5   => "Night",
+                6   => "Program AE",
+                256 => "Aperture priority",
+                512 => "Shutter priority",
+                768 => "Manual",
+              },
+    0x1100 => { __TAG__ => "AutoBracketing", 0 => "Off", 1 => "On"},
+    0x1300 => { __TAG__ => "BlurWarning", 0 => "No", 1 => "Yes"},
+    0x1301 => { __TAG__ => "FocusWarning", 0 => "No", 1 => "Yes"},
+    0x1302 => { __TAG__ => "AEWarning", 0 => "No", 1 => "Yes"},
+);
+
+my %casio_tags = (
+    0x0001 => { __TAG__ => "RecordingMode",
+                1 => "SingleShutter",
+                2 => "Panorama",
+                3 => "Night scene",
+                4 => "Portrait",
+                5 => "Landscape",
+              },
+    0x0002 => { __TAG__ => "Quality", 1 => "Economy", 2 => "Normal", 3 => "Fine" },
+    0x0003 => { __TAG__ => "FocusingMode",
+                2 => "Macro",
+                3 => "Auto",
+                4 => "Manual",
+                5 => "Infinity",
+              },
+    0x0004 => { __TAG__ => "FlashMode", 1 => "Auto", 2 => "On", 3 => "Off", 4 => "Red-eye reduction" },
+    0x0005 => { __TAG__ => "FlashIntensity", 11 => "Weak", 13 => "Normal", 15 => "Strong" },
+    0x0006 => "ObjectDistance",
+    0x0007 => { __TAG__ => "WhiteBalance", 
+                1 => "Auto",
+                2 => "Tungsten",
+                3 => "Daylight",
+                4 => "Fluorescent",
+                5 => "Shade",
+                129 => "Manual",
+              },
+    0x000a => { __TAG__ => "DigitalZoom", 65536 => "Off", 65537 => "2X" },
+    0x000b => { __TAG__ => "Sharpness", 0 => "Normal", 1 => "Soft", 2 => "Hard" },
+    0x000c => { __TAG__ => "Contrast"  , 0 => "Normal", 1 => "Low", 2 => "High" },
+    0x000d => { __TAG__ => "Saturation", 0 => "Normal", 1 => "Low", 2 => "High" },
+    0x0014 => { __TAG__ => "CCDSensitivity",
+                64  => "Normal",
+                125 => "+1.0",
+                250 => "+2.0",
+                244 => "+3.0",
+                80  => "Normal",
+                100 => "High",
+              },
+);
+
+my %makernotes = (
+    "NIKON E700"  => [8, 'CoolPix', \%nikon1_tags],
+    "NIKON E800"  => [8, 'CoolPix', \%nikon1_tags],
+    "NIKON E900"  => [8, 'CoolPix', \%nikon1_tags],
+    "NIKON E900S" => [8, 'CoolPix', \%nikon1_tags],
+    "NIKON E910"  => [8, 'CoolPix', \%nikon1_tags],
+    "NIKON E950"  => [8, 'CoolPix', \%nikon1_tags],
+    "NIKON E880"  => [0, 'CoolPix', \%nikon2_tags],
+    "NIKON E990"  => [0, 'CoolPix', \%nikon2_tags],
+    "NIKON CORPORATION NIKON D1"  => [0, 'NikonD1', \%nikon2_tags],
+    "OLYMPUS OPTICAL CO.,LTD C2000Z"  => [8, 'Olympus', \%olympus_tags],
+    "OLYMPUS OPTICAL CO.,LTD C2100UZ" => [8, 'Olympus', \%olympus_tags],
+    "OLYMPUS OPTICAL CO.,LTD C2500L"  => [8, 'Olympus', \%olympus_tags],
+    "OLYMPUS OPTICAL CO.,LTD C3030Z"  => [8, 'Olympus', \%olympus_tags],
+    "OLYMPUS OPTICAL CO.,LTD E-10"    => [8, 'Olympus', \%olympus_tags],
+    "FUJIFILM FinePix4900ZOOM"  => [-1, 'FinePix', \%fujifilm_tags],
+    "FUJIFILM FinePix40i"       => [-1, 'FinePix', \%fujifilm_tags],
+    "FUJIFILM FinePix4700 ZOOM" => [-1, 'FinePix', \%fujifilm_tags],
+    "FUJIFILM FinePixS1Pro"     => [-1, 'FinePix', \%fujifilm_tags],
+    "CASIO QV-3000EX"  => [0, 'Casio', \%casio_tags],
+    "Canon Canon EOS D30"            => [0, 'Canon', {}],
+    "Canon Canon DIGITAL IXUS"       => [0, 'Canon', {}],
+    "Canon Canon DIGITAL IXUS 300"   => [0, 'Canon', {}],
+    "Canon Canon PowerShot G1"       => [0, 'Canon', {}],
+    "Canon Canon PowerShot Pro90 IS" => [0, 'Canon', {}],
+    "Canon Canon PowerShot S10"      => [0, 'Canon', {}],
+    "Canon Canon PowerShot S20"      => [0, 'Canon', {}],
+);
+
 my %exif_intr_tags = (
     0x1    => "InteroperabilityIndex",
     0x2    => "InteroperabilityVersion",
@@ -242,12 +400,12 @@ sub ifd
 
 sub tagname
 {
-    $tiff_tags{$_[1]} || "Tag-$_[1]";
+    $tiff_tags{$_[1]} || sprintf "Tag-0x%04x",$_[1];
 }
 
 sub add_fields
 {
-    my($self, $offset, $ifds, $tags) = @_;
+    my($self, $offset, $ifds, $tags, $voff_plus) = @_;
     return unless $offset;
     $tags ||= \%tiff_tags;
 
@@ -257,6 +415,7 @@ sub add_fields
 	for my $i (0 .. $entries-1) {
 	    my($tag, $type, $count, $voff) =
 		$self->unpack("nnNN", substr($_, 2 + $offset + $i*12, 12));
+	    $voff += $voff_plus;
 	    my $val;
 	    if (my $t = $types[$type]) {
 		$type = $t->[0];
@@ -278,6 +437,23 @@ sub add_fields
 	    }
 	    $tag = $tags->{$tag} || $self->tagname($tag);
 
+	    if ($tag eq 'MakerNote' && exists $makernotes{$self->{Make}.' '.$self->{Model}}) {
+                my ($ifd_off, $tag_prefix, $sub) = @{$makernotes{$self->{Make}.' '.$self->{Model}}};
+                $self->{tag_prefix} = $tag_prefix;
+	        if ($ifd_off < 0) {
+                    # fuji kludge -  http://www.butaman.ne.jp/~tsuruzoh/Computer/Digicams/exif-e.html#APP4
+                    my $save_endian = $self->{little_endian};
+                    $self->{little_endian} = 1;
+                    $ifd_off = $self->unpack("N", substr($val, 8, 4));
+		    $self->add_fields($voff+$ifd_off, $ifds, $sub, $voff);
+                    $self->{little_endian} = $save_endian;
+                } else {
+	            $self->add_fields($voff+$ifd_off, $ifds, $sub);
+                }
+                delete $self->{tag_prefix};
+	        next FIELD;
+            }
+
 	    if (ref($tag)) {
 		die "Assert" unless ref($tag) eq "HASH";
 		if (my $sub = $tag->{__SUBIFD__}) {
@@ -288,7 +464,9 @@ sub add_fields
 		$tag = $tag->{__TAG__};
 	    }
 
+            $tag = $self->{tag_prefix} . '-' . $tag if $self->{tag_prefix};
 	    $self->_push_field($ifds, $tag, $type, $count, $val);
+            $self->{$tag} = $val if ($tag eq 'Make' or $tag eq 'Model');
 	}
     }
     $ifds;
