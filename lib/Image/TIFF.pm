@@ -61,7 +61,7 @@ my %nikon2_tags = (
 
 my %olympus_tags = (
     0x0200 => "SpecialMode",
-    0x0201 => { __TAG__ => "JpegQual", 1 => "SQ", 2 => "HQ", 3 => "SHQ" },
+    0x0201 => { __TAG__ => "JpegQual", 0 => "SQ", 1 => "HQ", 2 => "SHQ" },
     0x0202 => { __TAG__ => "Macro", 0 => "Normal", 1 => "Macro" },
     0x0204 => "DigiZoom",
     0x0207 => "SoftwareRelease",
@@ -313,6 +313,7 @@ my %makernotes = (
     "OLYMPUS OPTICAL CO.,LTD C3030Z"  => [8, 'Olympus', \%olympus_tags],
     "OLYMPUS OPTICAL CO.,LTD C3040Z"  => [8, 'Olympus', \%olympus_tags],
     "OLYMPUS OPTICAL CO.,LTD C4100Z,C4000Z" => [8, 'Olympus', \%olympus_tags],
+    "OLYMPUS OPTICAL CO.,LTD C700UZ"  => [8, 'Olympus', \%olympus_tags],
     "OLYMPUS OPTICAL CO.,LTD E-10"    => [8, 'Olympus', \%olympus_tags],
     "FUJIFILM FinePix4900ZOOM"  => [-1, 'FinePix', \%fujifilm_tags],
     "FUJIFILM FinePix6900ZOOM"  => [-1, 'FinePix', \%fujifilm_tags],
