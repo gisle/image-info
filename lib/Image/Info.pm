@@ -105,8 +105,8 @@ package Image::Info::Result;
 
 sub push_info
 {
-    my($self, $n, $key, $value) = @_;
-    push(@{$self->[$n]{$key}}, $value);
+    my($self, $n, $key) = splice(@_, 0, 3);
+    push(@{$self->[$n]{$key}}, @_);
 }
 
 sub clean_up
