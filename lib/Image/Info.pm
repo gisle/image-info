@@ -33,38 +33,47 @@ sub image_info
     if (!ref $source) {
         require Symbol;
         my $fh = Symbol::gensym();
-        open($fh, $source) || return;
+        open($fh, $source) || return _os_err("Can't open $source");
         binmode($fh);
         $source = $fh;
     }
     elsif (ref($source) eq "SCALAR") {
-	die;   # literal data not supported yet
+	return { Error => "Literal image source not supported yet" }
     }
     else {
-	seek($source, 0, 0) or die;
+	seek($source, 0, 0) or return _os_err("Can't rewind");
     }
 
     my $head;
-    read($source, $head, 32) == 32 or die;
-    seek($source, 0, 0) or die;
+    read($source, $head, 32) == 32 or return _os_err("Can't read head");
+    seek($source, 0, 0) or _os_err("Can't rewind");
 
     if (my $format = determine_file_format($head)) {
 	no strict 'refs';
 	my $mod = "Image::Info::$format";
 	my $sub = "$mod\::process_file";
-	unless (defined &$sub) {
-	    eval "require $mod";
-	    die $@ if $@;
-	    die "$mod did not define &$sub" unless defined &$sub;
-	}
-
 	my $info = bless [], "Image::Info::Result";
-	&$sub($info, $source, @_);
-	$info->clean_up;
+	eval {
+	    unless (defined &$sub) {
+		eval "require $mod";
+		die $@ if $@;
+		die "$mod did not define &$sub" unless defined &$sub;
+	    }
 
+	    &$sub($info, $source, @_);
+	    $info->clean_up;
+	};
+	return { Error => $@ } if $@;
 	return wantarray ? @$info : $info->[0];
     }
-    return;
+    return { Error => "Unrecognized file format" };
+}
+
+sub _os_err
+{
+    return { Error => "$_[0]: $!",
+	     Errno => $!+0,
+	   };
 }
 
 sub determine_file_format
