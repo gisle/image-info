@@ -88,6 +88,22 @@ sub process_file
 	elsif ($type eq "gAMA" && $len == 4) {
 	    $info->push_info(0, "Gamma", unpack("N", $data)/100_000);
 	}
+	elsif ($type eq "pHYs" && $len == 9) {
+	    my($res_x, $res_y, $unit) = unpack("NNC", $data);
+	    if (0 && $unit == 1) {
+		# convert to dpi
+		$unit = "dpi";
+		for ($res_x, $res_y) {
+		    $_ *= 0.0254;
+		}
+	    }
+	    $info->push_info(0, "XResolution" => $res_x);
+	    $info->push_info(0, "YResolution" => $res_y);
+	    if ($unit) {
+		$unit = "dpm" if $unit == 1;
+		$info->push_info(0, "ResolutionUnit" => $unit);
+	    }
+	}
 	elsif ($type eq "tEXt") {
 	    my($key, $val) = split(/\0/, $data, 2);
 	    # XXX should make sure $key is not in conflict with any
