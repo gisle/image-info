@@ -1,22 +1,17 @@
 package Image::Info::XBM;
-$VERSION = '1.03';
+$VERSION = '1.04';
 use strict;
-use Image::Xbm;
+use Image::Xbm 1.07;
 
 sub process_file{
     my($info, $source, $opts) = @_;
-    my(@comments, @warnings, $i, $imgdata);
 
-    *Image::Xbm::carp  = sub { push @warnings, @_; };
-    *Image::Xbm::croak = sub { $info->push_info(0, "error", @_); };
-    if( $Image::Xbm::Version cmp '1.07' < 1){
-	push @warnings, "This version of Image::Xbm does not support filehandles or scalar references";
-	$source = $info->get_info(0, "FileName");
-    }
-    if( $info->get_info(0, "error") ){
-	return; }
+    $SIG{__WARN__} = sub {
+	$info->push_info(0, "Warn", shift);
+    };
 
-    $i = Image::Xbm->new(-file, $source);
+    my $i = Image::Xbm->new(-file, $source);
+
     $info->push_info(0, "color_type" => "Grey");
     $info->push_info(0, "file_ext" => "xbm");
     $info->push_info(0, "file_media_type" => "image/x-xbitmap");
@@ -29,20 +24,12 @@ sub process_file{
     $info->push_info(0, "ColorTableSize" => 2 );
     if(  $opts->{L1D_Histogram} ){
 	#Do Histogram
-	$imgdata = $i->as_binstring();
+	my $imgdata = $i->as_binstring();
 	$info->push_info(0, "L1D_Histogram", [$imgdata =~ tr/0//d,
 					      $imgdata =~ tr/1//d ]);
     }
     $info->push_info(0, "HotSpotX" => $i->get(-hotx) );
     $info->push_info(0, "HotSpotY" => $i->get(-hoty) );
-
-    for (@comments) {
-	$info->push_info(0, "Comment", $_);
-    }
-    
-    for (@warnings) {
-	$info->push_info(0, "Warn", $_);
-    }
 }
 1;
 __END__

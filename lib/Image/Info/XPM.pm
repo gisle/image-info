@@ -3,23 +3,18 @@ $VERSION = '1.03';
 #Path to X11 RGB database
 $RGBLIB ||= "/usr/X11R6/lib/X11/rgb.txt";
 use strict;
-use Image::Xpm;
+use Image::Xpm 1.08;
 
 
 sub process_file{
     my($info, $source, $opts) = @_;
-    my(@comments, @warnings, $i);
 
-    *Image::Xpm::carp  = sub { push @warnings, @_; };
-    *Image::Xpm::croak = sub { $info->push_info(0, "error", @_); };
-    if( $Image::Xpm::Version cmp '1.08' < 1){
-	push @warnings, "This version of Image::Xpm does not support filehandles or scalar references";
-	$source = $info->get_info(0, "FileName");
-    }
-    if( $info->get_info(0, "error") ){
-	return; }
+    $SIG{__WARN__} = sub {
+	$info->push_info(0, "Warn", shift);
+    };
 
-    $i = Image::Xpm->new(-file, $source);
+    my $i = Image::Xpm->new(-file, $source);
+
     $info->push_info(0, "color_type" => "Indexed-RGB");
     $info->push_info(0, "file_ext" => "xpm");
     $info->push_info(0, "file_media_type" => "image/x-xpixmap");
@@ -53,7 +48,7 @@ sub process_file{
 			}
 			else{
 			    $RGB{white} = "0 but true";
-			    push @warnings, "Unable to open RGB database, you may need to set \$Image::Info::XPM::RGBLIB or define \$RGBLIB in ". __FILE__;
+			    $info->push_info(0, "Warn", "Unable to open RGB database, you may need to set \$Image::Info::XPM::RGBLIB or define \$RGBLIB in ". __FILE__);
 			}
 		    }
 		    $R = $RGB{$color}->[0];
@@ -78,14 +73,9 @@ sub process_file{
     $info->push_info(0, "HotSpotY" => $i->get(-hoty) );
     $info->push_info(0, 'XPM_Extension-'.ucfirst($i->get(-extname)) => $i->get(-extlines)) if
 	$i->get(-extname);
-    push @comments, @{$i->get(-comments)};
 
-    for (@comments) {
+    for (@{$i->get(-comments)}) {
 	$info->push_info(0, "Comment", $_);
-    }
-    
-    for (@warnings) {
-	$info->push_info(0, "Warn", $_);
     }
 }
 1;
