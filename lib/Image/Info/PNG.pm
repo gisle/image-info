@@ -59,7 +59,7 @@ sub process_file
 	    $ctype = {
 		      0 => "Gray",
 		      2 => "RGB",
-		      3 => "Indexed",
+		      3 => "Indexed-RGB",
 		      4 => "GrayA",
 		      6 => "RGBA",
 		     }->{$ctype} || $ctype;
@@ -73,7 +73,7 @@ sub process_file
 	    $info->push_info(0, "BitsPerSample", $depth);
 	    $info->push_info(0, "ColorType", $ctype);
 	    $info->push_info(0, "Compression", $compression);
-	    $info->push_info(0, "Filter", $filter);
+	    $info->push_info(0, "PNG_Filter", $filter);
 	    $info->push_info(0, "Interlace", $interlace)
 		if $interlace;
 	}
