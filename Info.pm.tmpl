@@ -38,7 +38,7 @@ sub image_info
     }
 
     my $head;
-    read($source, $head, 32) == 32 or return _os_err("Can't read head");
+    read($source, $head, 32) or return _os_err("Can't read head");
     if (ref($source) eq "IO::String") {
 	# XXX workaround until we can trap seek() with a tied file handle
 	$source->setpos(0);

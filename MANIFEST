@@ -21,6 +21,7 @@ t/dim.t
 t/exif.t
 t/png.t
 t/string.t
+t/tiny-pgm.t
 test.gif			An GIF example
 test.jpg			An Exif example from my Digicam
 test.pbm
@@ -32,3 +33,4 @@ test.svg
 test.txt
 test.xbm
 test.xpm
+tiny.pgm
