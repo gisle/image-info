@@ -1,12 +1,16 @@
-This is an extention that allows you to extract information from
-Exif-files.  Exif is the image format used by most digital cameras
-today.
-
-This code is written based on TsuruZoh Tachibanaya's "description of
-Exif file format" and Thierry Bousch's Python module 'exifdump.py'
-
+This Perl extention allows you to extract information from Exif-files.
+Exif is the image format used by most digital cameras today.  Exif
+images are also either JPEG or TIFF images and can be displayed by
+software that only knows how to deal with those formats.
 
 Copyright 1999 Gisle Aas.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
+
+
+This code is written based on TsuruZoh Tachibanaya's "Description of
+Exif file format" and Thierry Bousch's Python module 'exifdump.py'
+
+   http://www.butaman.ne.jp:8000/~tsuruzoh/exif-e.html
+   http://topo.math.u-psud.fr/~bousch/exifdump.py
