@@ -69,7 +69,7 @@ sub process_file
 
     while (1) {
 	my $intro = ord(my_read($fh, 1));
-	if ($intro == 0x3B) {  # trailer
+	if ($intro == 0x3B) {  # trailer (end of image)
 	    return;
 	}
 	elsif ($intro == 0x2C) {  # new image
@@ -98,7 +98,29 @@ sub process_file
 	elsif ($version eq "89a" && $intro == 0x21) {  # GIF89a extension
 	    my $label = ord(my_read($fh, 1));
 	    my $data = read_data_blocks($fh);
-	    $info->push_info($img_no, "L-$label" => $data);
+	    if ($label == 0xF9 && length($data) == 4) {  # Graphic Control
+		my($packed, $delay, $trans_color) = unpack("CvC", $data);
+		my $disposal_method = ($packed >> 3) & 0x07;
+		$info->push_info($img_no, "DisposalMethod", $disposal_method)
+		    if $disposal_method;
+		$info->push_info($img_no, "UserInput", 1)
+		    if $packed & 0x40;
+		$info->push_info($img_no, "Delay" => $delay/100) if $delay;
+		$info->push_info($img_no, "TransparencyIndex" => $trans_color)
+		    if $packed & 0x80;
+	    }
+	    elsif ($label == 0xFE) {  # Comment
+		$data =~ s/\0+$//;  # is often NUL-terminated
+		$info->push_info($img_no, "Comment", $data);
+	    }
+	    elsif ($label == 0xFF) {  # Application
+		my $app = substr($data, 0, 11, "");
+		my $auth = substr($app, -3, 3, "");
+		$info->push_info($img_no, "APP-$app-$auth" => $data);
+	    }
+	    else {
+		$info->push_info($img_no, "GIF_Extension-$label" => $data);
+	    }
 	}
 	else {
 	    die "Unknown introduced code $intro, bad GIF";
