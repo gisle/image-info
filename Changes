@@ -1,0 +1,15 @@
+1999-12-19   Gisle Aas <gisle@aas.no>
+
+    Release 0.01 (now Image-Info)
+
+    New common framwork that can support many image formats.
+
+    Added JPEG support
+
+    Added PNG support
+
+
+
+1999-12-14   Gisle Aas <gisle@aas.no>
+
+    First try, released as Image-Exif-0.01
