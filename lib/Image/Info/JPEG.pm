@@ -40,8 +40,8 @@ sub process_file
     my $soi = my_read($fh, 2);
     die "SOI missing" unless $soi eq "\xFF\xD8";
 
-    $info->push_info(0, "FileMediaType" => "image/jpeg");
-    $info->push_info(0, "FileExt" => "jpg");
+    $info->push_info(0, "file_media_type" => "image/jpeg");
+    $info->push_info(0, "file_ext" => "jpg");
 
     while (1) {
         my($ff, $mark, $len) = unpack("CCn", my_read($fh, 4));
@@ -67,8 +67,8 @@ sub process_chunk
         my($precision, $height, $width, $num_comp) =
             unpack("CnnC", substr($data, 0, 6, ""));
 	$info->push_info(0, "JPEG_Type", $sof{$mark});
-	$info->push_info(0, "ImageWidth", $width);
-	$info->push_info(0, "ImageHeight", $height);
+	$info->push_info(0, "width", $width);
+	$info->push_info(0, "height", $height);
 
 	for (1..$num_comp) {
 	    $info->push_info(0, "BitsPerSample", $precision);
@@ -78,7 +78,7 @@ sub process_chunk
 	    $info->push_info(0, "ColorType" => "Gray");
 	}
 	elsif ($num_comp == 3) {
-	    $info->push_info(0, "ColorType" => "RGB");  # or YCC??
+	    $info->push_info(0, "color_type" => "RGB");  # or YCC??
 	}
 
 	if (0) {
@@ -123,21 +123,22 @@ sub process_app0_jfif
     my($ver_hi, $ver_lo, $units, $x_density, $y_density, $x_thumb, $y_thumb) =
 	unpack("CC C nn CC", substr($data, 0, 9, ""));
     $info->push_info(0, "JFIF_Version", sprintf("%d.%02d", $ver_hi, $ver_lo));
-    if ($x_density == $y_density) {
-	$info->push_info(0, "Resolution" => $x_density);
+
+    my $res = $x_density != $y_density || !$units
+	? "$x_density/$y_density" : $x_density;
+
+    if ($units) {
+	$units = { 0 => "pixels",
+		   1 => "dpi",
+		   2 => "dpcm"
+		 }->{$units} || "units-$units";
+	$res .= " $units";
     }
-    else {
-	$info->push_info(0, "XResolution" => $x_density);
-	$info->push_info(0, "YResolution" => $y_density);
-    }
-    $info->push_info(0, "ResolutionUnit" => { 0 => "pixels",
-					      1 => "dpi",
-					      2 => "dpcm"
-					    }->{$units} || $units);
+    $info->push_info(0, "resolution", $res);
 
     if ($x_thumb || $y_thumb) {
-	$info->push_info(1, "ImageWidth", $x_thumb);
-	$info->push_info(1, "ImageLength", $y_thumb);
+	$info->push_info(1, "width", $x_thumb);
+	$info->push_info(1, "height", $y_thumb);
 	$info->push_info(1, "ByteCount", length($data));
     }
 }
