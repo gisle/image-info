@@ -29,9 +29,27 @@ sub process_file
     $info->push_info(0, "FileMediaType" => "image/png");
     $info->push_info(0, "FileExt" => "png");
 
+    my @chunks;
+
     while (1) {
         my($len, $type) = unpack("Na4", my_read($fh, 8));
-        $info->push_info(0, "PNG_Chunks", $type) unless $type eq "IDAT";
+
+	if (@chunks) {
+	    my $last = $chunks[-1];
+	    $last =~ s/\s(\d+)$//;
+	    my $count = $1 || 1;
+	    if ($last eq $type) {
+		$count++;
+		$chunks[-1] = "$type $count";
+	    }
+	    else {
+		push(@chunks, $type);
+	    }
+	}
+	else {
+	    push(@chunks, $type);
+	}
+
         last if $type eq "IEND";
         my $data = my_read($fh, $len + 4);
 	my $crc = unpack("N", substr($data, -4, 4, ""));
@@ -52,7 +70,7 @@ sub process_file
 
 	    $info->push_info(0, "ImageWidth", $w);
 	    $info->push_info(0, "ImageHeight", $h);
-	    $info->push_info(0, "BitDepth", $depth);
+	    $info->push_info(0, "BitsPerSample", $depth);
 	    $info->push_info(0, "ColorType", $ctype);
 	    $info->push_info(0, "Compression", $compression);
 	    $info->push_info(0, "Filter", $filter);
@@ -69,11 +87,13 @@ sub process_file
 	    $info->push_info(0, $key, $val);
 	}
 	elsif ($type eq "tIME" && $len == 7) {
-	    $info->push_info(0, "DateTime",
+	    $info->push_info(0, "LastModificationTime",
 			     sprintf("%04d-%02d-%02d %02d:%02d:%02d",
 				     unpack("nC5", $data)));
 	}
     }
+
+    $info->push_info(0, "PNG_Chunks", @chunks);
 }
 
 1;
