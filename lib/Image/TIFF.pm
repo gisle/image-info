@@ -173,7 +173,9 @@ sub add_fields
 		my @v = $self->unpack("x$voff$tmpl", $_);
 		$val = (@v > 1) ? \@v : $v[0];
 
-		if ($type =~ /S?RATIONAL$/ && @v == 2 && $val->[1]) {
+		if ($type =~ /S?RATIONAL$/ && @v == 2 && $val->[1] &&
+		    !($val->[0] % $val->[1]))
+		{
 		    $val = $val->[0]/$val->[1];
 		}
 
