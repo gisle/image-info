@@ -1,3 +1,14 @@
+2000-08-24   Gisle Aas <gisle@ActiveState.com>
+
+    Release 0.05
+
+    Passing a reference to a scalar as argument to img_info()
+    indicates that this scalar contains raw image data.  If you
+    want to use this feature, you need to install the IO::String
+    module first.
+
+
+
 2000-01-04   Gisle Aas <gisle@aas.no>
 
     Release 0.04
