@@ -1,16 +1,29 @@
-This Perl extention allows you to extract information from Exif-files.
-Exif is the image format used by most digital cameras today.  Exif
-images are also either JPEG or TIFF images and can be displayed by
-software that only knows how to deal with those formats.
+!!! This is work in progress.  Class names and interfaces will change.
+!!! Documentation is lacking.
+
+This Perl extention allows you to extract information from various
+image files.  In this alpha release we only support JPEG (plain JFIF
+and Exif) and PNG.  Usage is something like this:
+
+   $img = Image::Info->new("filename");
+   $hash_describing_1st_image = $img->info(0);   # or missing arg
+   $hash_describing_2nd_image = $img->info(1);
+
+TODO:
+   - add support for more image formats
+   - decode Exif integer codes
+   - standardize hash names (based on TIFF?)
+   - rational class
+   - Image::TIFF should not need to slurp
+
 
 Copyright 1999 Gisle Aas.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
-
-This code is written based on TsuruZoh Tachibanaya's "Description of
-Exif file format" and Thierry Bousch's Python module 'exifdump.py'
+The Exif code is written based on TsuruZoh Tachibanaya's "Description
+of Exif file format" and Thierry Bousch's Python module 'exifdump.py'
 
    http://www.butaman.ne.jp/~tsuruzoh/Computer/Digicams/exif-e.html
    http://topo.math.u-psud.fr/~bousch/exifdump.py
