@@ -11,7 +11,6 @@ use vars qw($VERSION);
 $VERSION = '1.00';
 
 my @types = (
-  undef,
   [ "BYTE",      "C1", 1],
   [ "ASCII",     "A1", 1],
   [ "SHORT",     "n1", 2],
@@ -212,6 +211,7 @@ my %exif_tags = (
     0x8769 => "ExifOffset",
     0x8773 => "InterColorProfile",
     0x8822 => { __TAG__ => "ExposureProgram",
+		0 => "unknown",
 		1 => "Manual",
 		2 => "Program",
 		3 => "Aperture priority",
@@ -220,6 +220,7 @@ my %exif_tags = (
 		6 => "Program action",
 		7 => "Portrait",
 		8 => "Landscape",
+		# 9 .. 255 reserved
 	      },
     0x8824 => "SpectralSensitivity",
     0x8825 => "GPSInfo",
@@ -239,23 +240,31 @@ my %exif_tags = (
     0x9205 => "MaxApertureValue",
     0x9206 => "SubjectDistance",
     0x9207 => { __TAG__ => "MeteringMode",
+		0 => "unknown",
 		1 => "Average",
-		2 => "Center weighted average",
+		2 => "CenterWeightedAverage",
 		3 => "Spot",
-		4 => "Multi-spot",
-		5 => "Multi-segment",
+		4 => "MultiSpot",
+		5 => "Pattern",
+		6 => "Partial",
+		# 7 .. 254 reserved in EXIF 1.2
+		255 => "other",
 	      },
     0x9208 => { __TAG__ => "LightSource",
-		0 => "Auto",
+		0 => "unknown",
 		1 => "Daylight",
 		2 => "Fluorescent",
 		3 => "Tungsten",
-		10 => "Flash",
+		17 => "Standard light A",
+		18 => "Standard light B",
+		19 => "Standard light C",
+		20 => "D55",
+		21 => "D65",
+		22 => "D75",
+		# 23 .. 254 reserved in EXIF 1.2
+		255 => "other",
 	      },
-    0x9209 => { __TAG__ => "Flash",
-		0 => "No",
-		1 => "Yes",
-	      },
+    0x9209 => "Flash",  # bitfield: (bit0: flash, bit1-2: returned light)
     0x920A => "FocalLength",
     0x927C => "MakerNote",
     0x9286 => "UserComment",
@@ -349,11 +358,18 @@ my %tiff_tags = (
   296   => {__TAG__ => "ResolutionUnit",
 	    1 => "pixels", 2 => "dpi", 3 => "dpcm",
 	   },
+  301   => "TransferFunction",
   305   => "Software",
   306   => "DateTime",
+  315   => "Artist",
+  318   => "WhitePoint",
+  319   => "PrimaryChromaticities",
   513   => "JPEGInterchangeFormat",
   514   => "JPEGInterchangeFormatLngth",
+  529   => "YCbCrCoefficients",
+  530   => "YCbCrSubSampling",
   531   => "YCbCrPositioning",
+  532   => "ReferenceBlackWhite",
   33432 => "Copyright",
   34665 => { __TAG__ => "ExifOffset",
 	     __SUBIFD__ => \%exif_tags,
@@ -405,6 +421,7 @@ sub unpack
     if ($self->{little_endian}) {
 	$template =~ tr/nN/vV/;
     }
+    #print "UNPACK $template\n";
     CORE::unpack($template, $_[0]);
 }
 
@@ -434,32 +451,54 @@ sub add_fields
     $tags ||= \%tiff_tags;
 
     for (${$self->{source}}) {  # alias as $_
+	last if $offset > length($_) - 2;  # bad offset
 	my $entries = $self->unpack("x$offset n", $_);
+	my $max_entries = int((length($_) - $offset - 2) / 12);
+	#print "ENTRIES $entries $max_entries\n";
+	if ($entries > $max_entries) {
+	    # Hmmm, something smells bad here...  parsing garbage
+	    $entries = $max_entries;
+	    last;
+	}
       FIELD:
 	for my $i (0 .. $entries-1) {
+	    my $entry_offset = 2 + $offset + $i*12;
 	    my($tag, $type, $count, $voff) =
-		$self->unpack("nnNN", substr($_, 2 + $offset + $i*12, 12));
-	    $voff += $voff_plus || 0;
-	    my $val;
-	    if (my $t = $types[$type]) {
-		$type = $t->[0];
-		my $tmpl = $t->[1];
-		my $vlen = $t->[2];
-		if ($count * $vlen <= 4) {
-		    $voff = 2 + $offset + $i*12 + 8;
-		}
-		$tmpl =~ s/(\d+)$/$count*$1/e;
+		$self->unpack("nnNN", substr($_, $entry_offset, 12));
+	    #print "TAG $tag $type $count $voff\n";
 
-		my @v = $self->unpack("x$voff$tmpl", $_);
-
-		if ($type =~ /^S(SHORT|LONG|RATIONAL)/) {
-		    my $max = 2 ** ($1 eq "SHORT" ? 15 : 31);
-		    $v[0] -= ($max * 2) if $v[0] >= $max;
-		}
-
-		$val = (@v > 1) ? \@v : $v[0];
-		bless $val, "Image::TIFF::Rational" if $type =~ /^S?RATIONAL$/;
+	    if ($type == 0 || $type > @types) {
+		# unknown type code might indicate that we are parsing garbage
+		next;
 	    }
+
+	    # extract type information
+	    my($tmpl, $vlen);
+	    ($type, $tmpl, $vlen) = @{$types[$type-1]};
+	    die "Assert" unless $type;
+
+	    if ($count * $vlen <= 4) {
+		$voff = $entry_offset + 8;
+	    }
+	    elsif ($voff + $count * $vlen > length($_)) {
+		# offset points outside of string, corrupt entry ignore
+		next;
+	    }
+	    else {
+		$voff += $voff_plus || 0;
+	    }
+	    $tmpl =~ s/(\d+)$/$count*$1/e;
+
+	    my @v = $self->unpack("x$voff $tmpl", $_);
+
+	    if ($type =~ /^S(SHORT|LONG|RATIONAL)/) {
+		my $max = 2 ** ($1 eq "SHORT" ? 15 : 31);
+		$v[0] -= ($max * 2) if $v[0] >= $max;
+	    }
+
+	    my $val = (@v > 1) ? \@v : $v[0];
+	    bless $val, "Image::TIFF::Rational" if $type =~ /^S?RATIONAL$/;
+
 	    $tag = $tags->{$tag} || $self->tagname($tag);
 
 	    if ($tag eq 'MakerNote' && exists $makernotes{$self->{Make}.' '.$self->{Model}}) {
@@ -482,6 +521,8 @@ sub add_fields
 	    if (ref($tag)) {
 		die "Assert" unless ref($tag) eq "HASH";
 		if (my $sub = $tag->{__SUBIFD__}) {
+		    next if $val < 0 || $val > length($_);
+		    #print "SUBIFD $tag->{__TAG__} $val ", length($_), "\n";
 		    $self->add_fields($val, $ifds, $sub);
 		    next FIELD;
 		}
@@ -567,7 +608,15 @@ sub as_string {
 
 sub as_float {
     my $self = shift;
-    $self->[0] / $self->[1];
+
+    # We check here because some stupid cameras (Samsung Digimax 200)
+    # use rationals with 0 denominator (found in thumbnail resolution spec).
+    if ($self->[1]) {
+	return $self->[0] / $self->[1];
+    }
+    else {
+ 	return $self->[0];
+    }
 }
 
 1;

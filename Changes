@@ -1,3 +1,20 @@
+2002-07-04   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.11
+
+    More robust TIFF parser that keeps on going if some of the
+    fields appears to be garbage.
+
+    Workaround for "Samsung Digimax 200"'s brain-dead resolution
+    values.
+
+    Updated some tags based on the Exif 1.2 spec.
+
+    Minor fix to exifdump example program so that it can actually
+    dump the test.jpg
+
+
+
 2002-05-28   Gisle Aas <gisle@ActiveState.com>
 
     Release 1.10

@@ -248,6 +248,14 @@ sub process_app1_exif
 	# Turn XResolution/YResolution into 'resolution'
 	my($xres) = $info->get_info($i, "XResolution", 1);
 	my($yres) = $info->get_info($i, "YResolution", 1);
+
+	# Samsung Digimax 200 is a totally confused camera that
+	# puts rational numbers with 0 as denominator and they
+	# also seem to not understand what resolution means.
+	for ($xres, $yres) {
+	    $_ += 0 if ref($_) eq "Image::TIFF::Rational";
+	}
+
 	my($unit) = $info->get_info($i, "ResolutionUnit", 1);
 	my $res = "1/1";  # default;
 	if ($xres && $yres) {
