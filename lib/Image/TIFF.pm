@@ -4,18 +4,18 @@ use strict;
 
 my @types = (
   undef,
-  [ "BYTE",      "C",  1],
-  [ "ASCII",     "A",  1],
-  [ "SHORT",     "n",  2],
-  [ "LONG",      "N",  4],
-  [ "RATIONAL",  "NN", 8],
-  [ "SBYTE",     "c",  1],
-  [ "UNDEFINE",  "a",  1],
-  [ "SSHORT",    "n",  2],
-  [ "SLONG",     "N",  4],
-  [ "SRATIONAL", "NN", 8],
-  [ "FLOAT",     "f",  4],
-  [ "DOUBLE",    "d",  8],
+  [ "BYTE",      "C1",  1],
+  [ "ASCII",     "A1",  1],
+  [ "SHORT",     "n1",  2],
+  [ "LONG",      "N1",  4],
+  [ "RATIONAL",  "N2", 8],
+  [ "SBYTE",     "c1",  1],
+  [ "UNDEFINE",  "a1",  1],
+  [ "SSHORT",    "n1",  2],
+  [ "SLONG",     "N1",  4],
+  [ "SRATIONAL", "N2", 8],
+  [ "FLOAT",     "f1",  4],
+  [ "DOUBLE",    "d1",  8],
 );
 
 my %tags = (
@@ -92,15 +92,21 @@ sub ifd
 {
     my $self = shift;
     my $num = shift || 0;
-    return $self->ifd_entries($self->{ifd}[$num]);
+    my @ifd;
+    return $self->add_fields($self->{ifd}[$num], \@ifd);
 }
 
-sub ifd_entries
+sub tagname
 {
-    my($self, $offset) = @_;
-    return unless $offset;
+    $tags{$_[1]} || "Tag-$_[1]";
+}
 
-    my @ifd;
+sub add_fields
+{
+    my($self, $offset, $ifds, $override_tags) = @_;
+    return unless $offset;
+    $override_tags ||= {};
+
     for (${$self->{source}}) {
 	my $entries = $self->unpack("x$offset n", $_);
 	for my $i (0 .. $entries-1) {
@@ -114,17 +120,23 @@ sub ifd_entries
 		if ($count * $vlen <= 4) {
 		    $voff = 2 + $offset + $i*12 + 8;
 		}
-		my @v = $self->unpack("x$voff$tmpl$count", $_);
+		$tmpl =~ s/(\d+)$/$count*$1/e;
+		my @v = $self->unpack("x$voff$tmpl", $_);
 		$val = (@v > 1) ? \@v : $v[0];
 	    }
 
-	    $tag = $tags{$tag} || "Tag-$tag";
-
-	    push(@ifd, [$tag, $type, $count, $voff, $val]);
+	    my $tag = $override_tags->{$tag} || $self->tagname($tag);
+	    $self->_push_field($ifds, $tag, $type, $count, $val);
 	}
     }
-    return \@ifd;
+    $ifds;
 }
 
+sub _push_field
+{
+    my $self = shift;
+    my $ifds = shift;
+    push(@$ifds, [@_]);
+}
 
 1;
