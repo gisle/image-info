@@ -528,7 +528,7 @@ sub add_fields
 		}
 		#hack for UNDEFINED values, they all have different
 		#meanings depending on tag
-		$val = $tag->{DECODER}($self,$val) if defined($tag->{DECODER});
+		$val = &{$tag->{DECODER}}($self,$val) if defined($tag->{DECODER});
 		$val = $tag->{$val} if exists $tag->{$val};
 		$tag = $tag->{__TAG__};
 	    }
