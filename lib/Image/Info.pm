@@ -133,6 +133,7 @@ Image::Info - Extract information from image files
  use Image::Info qw(image_info dim);
 
  my $info = image_info("image.jpg");
+ my($w, $h) = dim($info);
 
 =head1 DESCRIPTION
 
@@ -141,7 +142,7 @@ image files.  The following functions are provided:
 
 =over
 
-=item image_info( $file, %options )
+=item image_info( $file )
 
 This function takes the name of a file or a file handle as argument
 and will return one or more hashes describing the images inside the
@@ -176,21 +177,60 @@ The following names is common for any image format:
 
 =item FileMediaType
 
+This is the MIME type that is appropriate for the given file format.
+This is a string like: "image/png" or "image/jpeg".
+
 =item FileExt
+
+The is the suggested file name extention for a file of the given file
+format.  It is a 3 letter, lowercase string like "png", "jpg".
 
 =item ImageWidth
 
+This is the number of pixels horizontally in the image.
+
 =item ImageHeight
+
+This is the number of pixels vertically in the image.  (TIFF use the
+name ImageLenght for this field.)
 
 =item ColorType
 
-=item PixelsPerSample
+This is a short string describing what kind of values the pixels
+encode.  The value can be one of the following:
+
+  Gray
+  GrayA
+  RGB
+  RGBA
+  CMYK
+  YCbCr
+  CIELab
+
+These names can also be prefixed by "Indexed-" if the image is
+composed of indexes into a palette.
+
+It is simplar to the TIFF field PhotometricInterpretation, but this
+name was found to be to long, so we used the PNG term instead :-)
+
+=item SamplesPerPixel
+
+This says how many channels there are in the image.  For some image
+formats this number might be higher than the number implied from the
+C<ColorType>.
 
 =item BitsPerSample
+
+This says how many bits are used to encode each of samples.  The
+number of numbers here should be the same as C<SamplesPerPixel>.
 
 =item Resolution
 
 =item ResolutionUnit
+
+This is a string like C<dpi>, C<dpm>, C<dpcm>.  The special values
+C<pixels> are used when XResolution/YResolution simply denotes the
+squareness of pixels.
 
 =item XResolution
 
@@ -198,9 +238,32 @@ The following names is common for any image format:
 
 =item Comment
 
+Textual comments found in the file.
+
 =item Interlace
 
+If the image is interlaced, then this tell which interlace method is
+used.
+
 =item Compression
+
+This tell which compression algoritm is used.
+
+=back
+
+=head1 Supported Image Formats
+
+The following image file formats are supported:
+
+=over
+
+=item JPEG
+
+JFIF and Exif
+
+=item PNG
+
+=item GIF
 
 =back
 
