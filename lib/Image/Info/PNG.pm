@@ -97,8 +97,13 @@ sub process_file
 		    $_ *= 0.0254;
 		}
 	    }
-	    $info->push_info(0, "XResolution" => $res_x);
-	    $info->push_info(0, "YResolution" => $res_y);
+	    if ($res_x == $res_y) {
+		$info->push_info(0, "Resolution" => $res_x);
+	    }
+	    else {
+		$info->push_info(0, "XResolution" => $res_x);
+		$info->push_info(0, "YResolution" => $res_y);
+	    }
 	    if ($unit) {
 		$unit = "dpm" if $unit == 1;
 		$info->push_info(0, "ResolutionUnit" => $unit);
