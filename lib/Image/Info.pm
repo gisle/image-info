@@ -1,6 +1,6 @@
 package Image::Info;
 
-# Copyright 1999, Gisle Aas.
+# Copyright 1999-2001, Gisle Aas.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
@@ -10,7 +10,7 @@ use Symbol ();
 
 use vars qw($VERSION @EXPORT_OK);
 
-$VERSION = '0.05';  # $Date$
+$VERSION = '0.06';  # $Date$
 
 require Exporter;
 *import = \&Exporter::import;
