@@ -5,13 +5,15 @@ use Symbol ();
 
 use vars qw($VERSION @magic);
 
-$VERSION = '0.01';
+$VERSION = '0.01';  # $Date$
 
 @magic = (
    "\xFF\xD8" => "JPEG",
    "II*\0"    => "TIFF",
    "MM\0*"    => "TIFF",
    "\x89PNG\x0d\x0a\x1a\x0a" => "PNG",
+   "GIF87a" => "GIF",
+   "GIF89a" => "GIF",
 );
 
 sub new
