@@ -3,7 +3,7 @@
 
 package Image::Info;
 
-# Copyright 1999-2003, Gisle Aas.
+# Copyright 1999-2004, Gisle Aas.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
@@ -13,7 +13,7 @@ use Symbol ();
 
 use vars qw($VERSION @EXPORT_OK);
 
-$VERSION = '1.15';
+$VERSION = '1.16';
 
 require Exporter;
 *import = \&Exporter::import;
@@ -384,8 +384,6 @@ http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf
 Also good writeup on exif spec at:
 http://www.ba.wakwak.com/~tsuruzoh/Computer/Digicams/exif-e.html
 
-=item TIFF
-
 =item XBM
 
 See L<Image::Info::XBM> for details.
@@ -402,7 +400,7 @@ L<Image::Size>
 
 =head1 AUTHORS
 
-Copyright 1999-2001 Gisle Aas.
+Copyright 1999-2004 Gisle Aas.
 
 GIF fixes by Ralf Steines <metamonk@yahoo.com>.
 

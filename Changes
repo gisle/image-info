@@ -1,3 +1,15 @@
+2004-01-07   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.16
+
+    Support for Canon 300D/Digital Rebel.  Patch contributed
+    by Karl Palsson <kpalsson@cisco.com>.
+
+    Cleaned up SVG/XPM/XBM implementations so that they
+    don't try to override carp/croak in other modules.
+
+
+
 2003-10-06   Gisle Aas <gisle@ActiveState.com>
 
     Release 1.15
