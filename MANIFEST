@@ -11,6 +11,7 @@ lib/Image/Info/JPEG.pm
 lib/Image/Info/PNG.pm
 lib/Image/Info/PPM.pm
 lib/Image/Info/SVG.pm
+lib/Image/Info/TIFF.pm
 lib/Image/Info/XBM.pm
 lib/Image/Info/XPM.pm
 lib/Image/Info.pm
