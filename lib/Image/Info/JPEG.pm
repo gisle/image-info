@@ -148,7 +148,7 @@ sub process_app0_jfxx
 {
     my($info, $data) = @_;
     my($code) = ord(substr($data, 0, 1, ""));
-    $info->push_info(1, "ImageType",
+    $info->push_info(1, "JFXX_ImageType",
 		     { 0x10 => "JPEG thumbnail",
 		       0x11 => "Bitmap thumbnail",
 		       0x13 => "RGB thumbnail",
