@@ -117,6 +117,15 @@ sub process_file
 			     sprintf("%04d-%02d-%02d %02d:%02d:%02d",
 				     unpack("nC5", $data)));
 	}
+	elsif ($type eq "sBIT") {
+	    $info->push_info(0, "SignificantBits" => unpack("C*", $data));
+	}
+	elsif ($type eq "IDAT") {
+	    # ignore
+	}
+	else {
+	    $info->push_info(0, "Chunk-$type" => $data);
+	}
     }
 
     $info->push_info(0, "PNG_Chunks", @chunks);
