@@ -21,6 +21,28 @@ $VERSION = '0.02';  # $Date$
    "GIF89a" => "GIF",
 );
 
+sub image_info
+{
+    my $source = shift;
+    my $obj = Image::Info->new($source);
+    $obj->info;
+}
+
+sub dim
+{
+    my $img = shift || return;
+    my $x = $img->{ImageWidth} || return;
+    my $y = $img->{ImageLength} || return;
+    wantarray ? ($x, $y) : "$x×$y";
+}
+
+sub html_dim
+{
+    my($x, $y) = dim($_);
+    return unless $x;
+    "WIDTH=$x HEIGHT=$y";
+}
+
 sub new
 {
     my($class, $source) = @_;
