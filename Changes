@@ -1,5 +1,14 @@
 2003-10-06   Gisle Aas <gisle@ActiveState.com>
 
+    Release 1.15
+
+    Avoid IO::String dependency for perl-5.8.  It was supposed to
+    work but did not.
+
+
+
+2003-10-06   Gisle Aas <gisle@ActiveState.com>
+
     Release 1.14
 
     Support TIFF/Exif GPS tags.

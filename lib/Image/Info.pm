@@ -13,7 +13,7 @@ use Symbol ();
 
 use vars qw($VERSION @EXPORT_OK);
 
-$VERSION = '1.14';
+$VERSION = '1.15';
 
 require Exporter;
 *import = \&Exporter::import;
@@ -35,8 +35,14 @@ sub image_info
         $source = $fh;
     }
     elsif (ref($source) eq "SCALAR") {
-	require IO::String;
-	$source = IO::String->new($$source);
+	if ($] >= 5.008) {
+	    open(my $s, "<", $source) or return _os_err("Can't open string");
+	    $source = $s;
+	}
+	else {
+	    require IO::String;
+	    $source = IO::String->new($$source);
+	}
     }
     else {
 	seek($source, 0, 0) or return _os_err("Can't rewind");
