@@ -8,7 +8,7 @@ package Image::TIFF;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 my @types = (
   undef,
@@ -415,7 +415,7 @@ sub add_fields
 	for my $i (0 .. $entries-1) {
 	    my($tag, $type, $count, $voff) =
 		$self->unpack("nnNN", substr($_, 2 + $offset + $i*12, 12));
-	    $voff += $voff_plus;
+	    $voff += $voff_plus || 0;
 	    my $val;
 	    if (my $t = $types[$type]) {
 		$type = $t->[0];
