@@ -10,7 +10,7 @@ use Symbol ();
 
 use vars qw($VERSION @EXPORT_OK);
 
-$VERSION = '0.04';  # $Date$
+$VERSION = '0.05';  # $Date$
 
 require Exporter;
 *import = \&Exporter::import;
@@ -38,7 +38,8 @@ sub image_info
         $source = $fh;
     }
     elsif (ref($source) eq "SCALAR") {
-	return { error => "Literal image source not supported yet" }
+	require IO::String;
+	$source = IO::String->new($$source);
     }
     else {
 	seek($source, 0, 0) or return _os_err("Can't rewind");
@@ -46,7 +47,13 @@ sub image_info
 
     my $head;
     read($source, $head, 32) == 32 or return _os_err("Can't read head");
-    seek($source, 0, 0) or _os_err("Can't rewind");
+    if (ref($source) eq "IO::String") {
+	# XXX workaround until we can trap seek() with a tied file handle
+	$source->setpos(0);
+    }
+    else {
+	seek($source, 0, 0) or _os_err("Can't rewind");
+    }
 
     if (my $format = determine_file_format($head)) {
 	no strict 'refs';
@@ -149,6 +156,8 @@ image files.  The following functions are provided:
 
 =item image_info( $file )
 
+=item image_info( \$imgdata )
+
 This function takes the name of a file or a file handle as argument
 and will return one or more hashes describing the images inside the
 file.  If there is only one image in the file only one hash is
@@ -158,6 +167,10 @@ returned.
 In case of error, and hash containing the "error" key will be
 returned.  The corresponding value will be an appropriate error
 message.
+
+If a reference to a scalar is passed as argument to this function,
+then it is assumed that this scalar contains the raw image data
+directly.
 
 =item dim( $info_hash )
 
