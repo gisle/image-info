@@ -20,6 +20,8 @@ require Exporter;
 
 @EXPORT_OK = qw(image_info dim html_dim);
 
+my %mod_failure;
+
 sub image_info
 {
     my($source, %cnf) = @_;
@@ -57,8 +59,14 @@ sub image_info
 	my $info = bless [], "Image::Info::Result";
 	eval {
 	    unless (defined &$sub) {
+	        if (my $fail = $mod_failure{$mod}) {
+		    die $fail;
+		}
 		eval "require $mod";
-		die $@ if $@;
+		if ($@) {
+		    $mod_failure{$mod} = $@;
+		    die $@;
+		}
 		die "$mod did not define &$sub" unless defined &$sub;
 	    }
 
