@@ -55,6 +55,27 @@ sub my_read
     $buf;
 }
 
+BEGIN {
+    my $f = ($] >= 5.008) ? <<'EOT' : <<'EOT';
+        sub with_io_string (&$) {
+	    open(my $fh, "<", \$_[1]);
+	    local $_ = $fh;
+	    &{$_[0]};
+	}
+EOT
+	sub with_io_string (&$) {
+	    require IO::String;
+	    local $_ = IO::String->new($_[1]);
+	    &{$_[0]};
+	    $_->close;
+	}
+EOT
+
+    #print $f;
+    eval $f;
+    die $@ if $@;
+}
+
 sub process_file
 {
     my($info, $fh, $cnf) = @_;
@@ -205,10 +226,9 @@ sub process_app0_jfxx
 
     if ($code == 0x10) {
 	eval {
-	    require IO::String;
-	    my $thumb_fh = IO::String->new($data);
-	    _process_file($info, $thumb_fh, 1);
-	    $thumb_fh->close;
+	    with_io_string {
+		_process_file($info, $_, 1);
+	    } $data;
 	};
 	$info->push_info(1, "error" => $@) if $@;
     }
@@ -241,10 +261,9 @@ sub process_app1_exif
 	    my $jdata = substr($data, $ipos, $ilen);
 	    #$info->push_info($i, "JPEGImage" => $jdata);
 
-	    require IO::String;
-	    my $fh = IO::String->new($jdata);
-	    _process_file($info, $fh, $i);
-	    $fh->close;
+	    with_io_string {
+		_process_file($info, $_, $i);
+	    } $jdata;
 	}
 
 	# Turn XResolution/YResolution into 'resolution'
