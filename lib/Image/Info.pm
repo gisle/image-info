@@ -176,7 +176,7 @@ tags like <img src="...">.
 The image_info() function return information about an image as a hash.
 The key values that can occur is based on the TIFF names.
 
-The following names is common for any image format:
+The following names are common for any image format:
 
 =over
 
@@ -197,7 +197,7 @@ This is the number of pixels horizontally in the image.
 =item ImageHeight
 
 This is the number of pixels vertically in the image.  (TIFF use the
-name ImageLenght for this field.)
+name ImageLength for this field.)
 
 =item ColorType
 
@@ -232,18 +232,23 @@ number of numbers here should be the same as C<SamplesPerPixel>.
 
 =item Resolution
 
-This field is used when XResolution and YResolution is the same, which
-they normally are.
+This field is instead of XResolution/YResolution when the pixels in
+the image are square.
 
 =item ResolutionUnit
 
-This is a string like C<dpi>, C<dpm>, C<dpcm>.  The special values
-C<pixels> are used when XResolution/YResolution simply denotes the
-squareness of pixels.
+This is a string like C<dpi>, C<dpm>, C<dpcm> giving the physical size
+of the image on screen or paper.  If missing when
+XResolution/YResolution is present, then the resolution is used to
+denote the squareness of pixels in the image.
 
 =item XResolution
 
+The horizontal size of pixels.
+
 =item YResolution
+
+The vertical  size of pixels.
 
 =item Comment
 
