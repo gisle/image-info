@@ -154,6 +154,148 @@ my %casio_tags = (
               },
 );
 
+my %canon_0x0001_tags = (
+     0 => { __TAG__ => "MacroMode", 1 => "Macro", 2 => "Normal" },
+     1 => "SelfTimer",
+     2 => { __TAG__ => "Quality", 2 => "Normal", 3 => "Fine", 5 => "SuperFine" },
+     3 => 'Tag-0x0001-03',
+     4 => { __TAG__ => 'FlashMode',
+            0 => 'Flash Not Fired',
+            1 => 'Auto',
+            2 => 'On',
+            3 => 'Red-Eye Reduction',
+            4 => 'Slow Synchro',
+            5 => 'Auto + Red-Eye Reduction',
+            6 => 'On + Red-Eye Reduction',
+            16 => 'External Flash'
+          },
+     5 => { __TAG__ => 'ContinuousDriveMode', 0 => 'Single Or Timer', 1 => 'Continuous' },
+     6 => 'Tag-0x0001-06',
+     7 => { __TAG__ => 'FocusMode',
+            0 => 'One-Shot',
+            1 => 'AI Servo',
+            2 => 'AI Focus',
+            3 => 'MF',
+            4 => 'Single',
+            5 => 'Continuous',
+            6 => 'MF'
+          },
+     8 => 'Tag-0x0001-08',
+     9 => 'Tag-0x0001-09',
+    10 => { __TAG__ => 'ImageSize', 0 => 'Large', 1 => 'Medium', 2 => 'Small' },
+    11 => { __TAG__ => 'EasyShootingMode',
+            0 => 'Full Auto',
+            1 => 'Manual',
+            2 => 'Landscape',
+            3 => 'Fast Shutter',
+            4 => 'Slow Shutter',
+            5 => 'Night',
+            6 => 'B&W',
+            7 => 'Sepia',
+            8 => 'Portrait',
+            9 => 'Sports',
+            10 => 'Macro/Close-Up',
+            11 => 'Pan Focus'
+         },
+    12 => { __TAG__ => 'DigitalZoom', 0 => 'None', 1 => '2x', 2 => '4x' },
+    13 => { __TAG__ => 'Contrast', 0xFFFF => 'Low', 0 => 'Normal', 1 => 'High' },
+    14 => { __TAG__ => 'Saturation', 0xFFFF => 'Low', 0 => 'Normal', 1 => 'High' },
+    15 => { __TAG__ => 'Sharpness', 0xFFFF => 'Low', 0 => 'Normal', 1 => 'High' },
+    16 => { __TAG__ => 'ISO',
+            0 => 'See ISOSpeedRatings Tag',
+            15 => 'Auto',
+            16 => '50',
+            17 => '100',
+            18 => '200',
+            19 => '400'
+         },
+    17 => { __TAG__ => 'MeteringMode', 3 => 'Evaluative', 4 => 'Partial', 5 => 'Center-Weighted' },
+    18 => { __TAG__ => 'FocusType',
+            0 => 'Manual',
+            1 => 'Auto',
+            3 => 'Close-Up (Macro)',
+            8 => 'Locked (Pan Mode)'
+         },
+    19 => { __TAG__ => 'AFPointSelected',
+            0x3000 => 'None { __TAG__ => MF)',
+            0x3001 => 'Auto-Selected',
+            0x3002 => 'Right',
+            0x3003 => 'Center',
+            0x3004 => 'Left'
+         },
+    20 => { __TAG__ => 'ExposureMode',
+            0 => 'Easy Shooting',
+            1 => 'Program',
+            2 => 'Tv-priority',
+            3 => 'Av-priority',
+            4 => 'Manual',
+            5 => 'A-DEP'
+         },
+    21 => 'Tag-0x0001-21',
+    22 => 'Tag-0x0001-22',
+    23 => 'LongFocalLengthOfLensInFocalUnits', 
+    24 => 'ShortFocalLengthOfLensInFocalUnits',
+    25 => 'FocalUnitsPerMM',
+    26 => 'Tag-0x0001-26',
+    27 => 'Tag-0x0001-27',
+    28 => { __TAG__ => 'FlashActivity', 0 => 'Did Not Fire', 1 => 'Fired' },
+    29 => { __TAG__ => 'FlashDetails',
+            14 => 'External E-TTL',
+            13 => 'Internal Flash',
+            11 => 'FP Sync Used',
+            7 => '2nd ("Rear")-Curtain Sync Used',
+            4 => 'FP Sync Enabled'
+         },
+    30 => 'Tag-0x0001-30',
+    31 => 'Tag-0x0001-31',
+    32 => { __TAG__ => 'FocusMode', 0 => 'Single', 1 => 'Continuous' },    
+);
+
+my %canon_0x0004_tags = (  
+    7 => { __TAG__ => 'WhiteBalance',
+           0 => 'Auto',
+           1 => 'Sunny',
+           2 => 'Cloudy',
+           3 => 'Tungsten',
+           4 => 'Fluorescent',
+           5 => 'Flash',
+           6 => 'Custom'
+         },
+    9 => 'SequenceNumber',
+    14 => 'AFPointUsed',
+    15 => { __TAG__ => 'FlashBias',
+           0xFFC0 => '-2 EV',
+           0xFFCC => '-1.67 EV',
+           0xFFD0 => '-1.50 EV',
+           0xFFD4 => '-1.33 EV',
+           0xFFE0 => '-1 EV',
+           0xFFEC => '-0.67 EV',
+           0xFFF0 => '-0.50 EV',
+           0xFFF4 => '-0.33 EV',
+           0x0000 => '0 EV',
+           0x000C => '0.33 EV',
+           0x0010 => '0.50 EV',
+           0x0014 => '0.67 EV',
+           0x0020 => '1 EV',
+           0x002C => '1.33 EV',
+           0x0030 => '1.50 EV',
+           0x0034 => '1.67 EV',
+           0x0040 => '2 EV', 
+         },
+    19 => 'SubjectDistance'
+);
+
+
+my %canon_tags = (
+    0x0001 => { __TAG__ => "Custom_0x0001", __ARRAYOFFSET__ => \%canon_0x0001_tags },
+    0x0004 => { __TAG__ => "Custom_0x0004", __ARRAYOFFSET__ => \%canon_0x0004_tags },
+    0x0006 => "ImageType",
+    0x0007 => "FirmwareVersion",
+    0x0008 => "ImageNumber",
+    0x0009 => "OwnerName",
+    0x000c => "SerialNumber",
+);
+
 my %makernotes = (
     "NIKON E700"  => [8, 'CoolPix', \%nikon1_tags],
     "NIKON E800"  => [8, 'CoolPix', \%nikon1_tags],
@@ -175,17 +317,19 @@ my %makernotes = (
     "FUJIFILM FinePix4900ZOOM"  => [-1, 'FinePix', \%fujifilm_tags],
     "FUJIFILM FinePix6900ZOOM"  => [-1, 'FinePix', \%fujifilm_tags],
     "FUJIFILM FinePix40i"       => [-1, 'FinePix', \%fujifilm_tags],
+    "FUJIFILM FinePix2400Zoom" => [-1, 'FinePix', \%fujifilm_tags],
     "FUJIFILM FinePix4700 ZOOM" => [-1, 'FinePix', \%fujifilm_tags],
     "FUJIFILM FinePixS1Pro"     => [-1, 'FinePix', \%fujifilm_tags],
     "CASIO QV-3000EX"  => [0, 'Casio', \%casio_tags],
-    "Canon Canon EOS D30"            => [0, 'Canon', {}],
-    "Canon Canon EOS D60"            => [0, 'Canon', {}],
-    "Canon Canon DIGITAL IXUS"       => [0, 'Canon', {}],
-    "Canon Canon DIGITAL IXUS 300"   => [0, 'Canon', {}],
-    "Canon Canon PowerShot G1"       => [0, 'Canon', {}],
-    "Canon Canon PowerShot Pro90 IS" => [0, 'Canon', {}],
-    "Canon Canon PowerShot S10"      => [0, 'Canon', {}],
-    "Canon Canon PowerShot S20"      => [0, 'Canon', {}],
+    "Canon Canon EOS 10D"            => [0, 'Canon', \%canon_tags],
+    "Canon Canon EOS D30"            => [0, 'Canon', \%canon_tags],
+    "Canon Canon EOS D60"            => [0, 'Canon', \%canon_tags],
+    "Canon Canon DIGITAL IXUS"       => [0, 'Canon', \%canon_tags],
+    "Canon Canon DIGITAL IXUS 300"   => [0, 'Canon', \%canon_tags],
+    "Canon Canon PowerShot G1"       => [0, 'Canon', \%canon_tags],
+    "Canon Canon PowerShot Pro90 IS" => [0, 'Canon', \%canon_tags],
+    "Canon Canon PowerShot S10"      => [0, 'Canon', \%canon_tags],
+    "Canon Canon PowerShot S20"      => [0, 'Canon', \%canon_tags],
 );
 
 my %exif_intr_tags = (
@@ -320,11 +464,11 @@ my %exif_tags = (
     0xA20E => "FocalPlaneXResolution",        # 0x920E    -  -
     0xA20F => "FocalPlaneYResolution",        # 0x920F    -  -
     0xA210 => { __TAG__ => "FocalPlaneResolutionUnit",     # 0x9210    -  -
-		1 => "dpi",
-		2 => "dpm",
-		3 => "dpcm",
-		4 => "dpmm",
-		5 => "dpµm",
+		1 => "dpi",  # 25.4
+		2 => "dpm",  # 25.4??
+		3 => "dpcm", # 10
+		4 => "dpmm", # 1
+		5 => "dpµm", # .001
 	      },
     0xA214 => "SubjectLocation",              # 0x9214    -  -
     0xA215 => "ExposureIndex",                # 0x9215    -  -
@@ -639,6 +783,24 @@ sub add_fields
 		    $self->add_fields($val, $ifds, $sub);
 		    next FIELD;
 		}
+		if (my $sub = $tag->{__ARRAYOFFSET__}) {
+		    my $prefix = $tag = $self->{tag_prefix} . '-' if $self->{tag_prefix};	    
+		    for (my $i=0; $i < @$val; $i++) {
+		      if ( exists($sub->{$i}) )
+		      { if ( ref($sub->{$i}) eq "HASH" && exists($sub->{$i}->{__TAG__}) ) 
+		      	{ if ( exists($sub->{$i}->{$val->[$i]}) ) 
+		      		{ $self->_push_field($ifds, $prefix . $sub->{$i}->{__TAG__}, $type, $count, 
+		      		                 $sub->{$i}->{$val->[$i]} ); }
+		          else 
+		            { $self->_push_field($ifds, $prefix . $sub->{$i}->{__TAG__}, $type, $count, 
+		      		                 "Unknown (" . $val->[$i] . ")") ; }
+		      	}
+		        else
+		        { $self->_push_field($ifds, $prefix . $sub->{$i}, $type, $count, $val->[$i]); }
+		      }
+		    }
+		    next FIELD;
+		}
 		#hack for UNDEFINED values, they all have different
 		#meanings depending on tag
 		$val = &{$tag->{DECODER}}($self,$val) if defined($tag->{DECODER});
@@ -646,9 +808,10 @@ sub add_fields
 		$tag = $tag->{__TAG__};
 	    }
 
-            $tag = $self->{tag_prefix} . '-' . $tag if $self->{tag_prefix};
+        $tag = $self->{tag_prefix} . '-' . $tag if $self->{tag_prefix};
+        #if ( $val =~ m/ARRAY/ ) { $val = join(', ',@$val); }
 	    $self->_push_field($ifds, $tag, $type, $count, $val);
-            $self->{$tag} = $val if ($tag eq 'Make' or $tag eq 'Model');
+        $self->{$tag} = $val if ($tag eq 'Make' or $tag eq 'Model');
 	}
     }
     $ifds;
