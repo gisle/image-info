@@ -162,8 +162,8 @@ sub process_app1_exif
 	return;
     }
 
-    require Image::TIFF::Exif;
-    my $t = Image::TIFF::Exif->new(\$data);
+    require Image::TIFF;
+    my $t = Image::TIFF->new(\$data);
 
     for my $i (0 .. $t->num_ifds - 1) {
 	my $ifd = $t->ifd($i);
@@ -171,7 +171,6 @@ sub process_app1_exif
 	    $info->push_info($i, $_->[0], $_->[3]);
 	}
     }
-
 }
 
 1;
