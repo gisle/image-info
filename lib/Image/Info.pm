@@ -38,7 +38,7 @@ sub image_info
         $source = $fh;
     }
     elsif (ref($source) eq "SCALAR") {
-	return { Error => "Literal image source not supported yet" }
+	return { error => "Literal image source not supported yet" }
     }
     else {
 	seek($source, 0, 0) or return _os_err("Can't rewind");
@@ -63,15 +63,15 @@ sub image_info
 	    &$sub($info, $source, @_);
 	    $info->clean_up;
 	};
-	return { Error => $@ } if $@;
+	return { error => $@ } if $@;
 	return wantarray ? @$info : $info->[0];
     }
-    return { Error => "Unrecognized file format" };
+    return { error => "Unrecognized file format" };
 }
 
 sub _os_err
 {
-    return { Error => "$_[0]: $!",
+    return { error => "$_[0]: $!",
 	     Errno => $!+0,
 	   };
 }
@@ -155,8 +155,9 @@ file.  If there is only one image in the file only one hash is
 returned.  In scalar context, only the hash for the first image is
 returned.
 
-In case of error, and hash containing the "Error" key will be
-returned.
+In case of error, and hash containing the "error" key will be
+returned.  The corresponding value will be an appropriate error
+message.
 
 =item dim( $info_hash )
 
