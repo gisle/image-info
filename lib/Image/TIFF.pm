@@ -325,6 +325,7 @@ my %makernotes = (
     "Canon Canon EOS 10D"            => [0, 'Canon', \%canon_tags],
     "Canon Canon EOS D30"            => [0, 'Canon', \%canon_tags],
     "Canon Canon EOS D60"            => [0, 'Canon', \%canon_tags],
+    "Canon Canon EOS DIGITAL REBEL"  => [0, 'Canon', \%canon_tags],
     "Canon Canon DIGITAL IXUS"       => [0, 'Canon', \%canon_tags],
     "Canon Canon DIGITAL IXUS 300"   => [0, 'Canon', \%canon_tags],
     "Canon Canon PowerShot G1"       => [0, 'Canon', \%canon_tags],
