@@ -40,6 +40,9 @@ sub process_file
     my $soi = my_read($fh, 2);
     die "SOI missing" unless $soi eq "\xFF\xD8";
 
+    $info->push_info(0, "FileMediaType" => "image/jpeg");
+    $info->push_info(0, "FileExt" => "jpg");
+
     while (1) {
         my($ff, $mark, $len) = unpack("CCn", my_read($fh, 4));
         last if $ff != 0xFF;
@@ -57,13 +60,29 @@ sub process_chunk
     if ($mark == 0xFE) {
         $info->push_info(0, Comment => $data);
     }
+    elsif ($mark >= 0xE0 && $mark <= 0xEF) {
+        process_app($info, $mark, $data);
+    }
     elsif ($sof{$mark}) {
         my($precision, $height, $width, $num_comp) =
             unpack("CnnC", substr($data, 0, 6, ""));
 	$info->push_info(0, "ImageType", "JPEG ". $sof{$mark});
 	$info->push_info(0, "ImageWidth", $width);
-	$info->push_info(0, "ImageLength", $height);
-        $info->push_info(0, "Precision", "$num_comp x $precision");
+	$info->push_info(0, "ImageHeight", $height);
+
+	for (1..$num_comp) {
+	    $info->push_info(0, "BitsPerSample", $precision);
+	}
+	if ($num_comp == 1) {
+	    $info->push_info(0, "ColorType" => "Gray");
+	}
+	elsif ($num_comp == 3) {
+	    $info->push_info(0, "ColorType" => "RGB");
+	}
+	else {
+	    $info->push_info(0, "ColorComponents" => 3);
+	}
+
 =for comment
         my $i = 1;
         while (length($data)) {
@@ -77,9 +96,6 @@ sub process_chunk
         }
 =cut
 
-    }
-    elsif ($mark >= 0xE0 && $mark <= 0xEF) {
-        process_app($info, $mark, $data);
     }
 }
 
@@ -115,13 +131,13 @@ sub process_app0_jfif
     my($ver_hi, $ver_lo, $units, $x_density, $y_density, $x_thumb, $y_thumb) =
 	unpack("CC C nn CC", substr($data, 0, 9, ""));
     $info->push_info(0, "JFIF_Version", sprintf("%d.%02d", $ver_hi, $ver_lo));
-    $info->push_info(0, "JFIF_Density",
-		     sprintf("%dx%d %s", $x_density, $y_density,
-			     { 0 => "pixels",
-			       1 => "dpi",
-			       2 => "dots per cm"
-			     }->{$units} || "(unit $units)"
-			    ));
+    $info->push_info(0, "XResolution" => $x_density);
+    $info->push_info(0, "YResolution" => $y_density);
+    $info->push_info(0, "ResolutionUnit" => { 0 => "pixels",
+					      1 => "dpi",
+					      2 => "dots per cm"
+					    }->{$units} || $units);
+
     if ($x_thumb || $y_thumb) {
 	$info->push_info(1, "ImageWidth", $x_thumb);
 	$info->push_info(1, "ImageLength", $y_thumb);
