@@ -124,7 +124,7 @@ sub process_app0_jfif
 	unpack("CC C nn CC", substr($data, 0, 9, ""));
     $info->push_info(0, "JFIF_Version", sprintf("%d.%02d", $ver_hi, $ver_lo));
     if ($x_density == $y_density) {
-	$info->push_info(0, "Resulution" => $x_density);
+	$info->push_info(0, "Resolution" => $x_density);
     }
     else {
 	$info->push_info(0, "XResolution" => $x_density);
