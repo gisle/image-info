@@ -1,6 +1,6 @@
 package Image::Info::GIF;
 
-# Copyright 1999, Gisle Aas.
+# Copyright 1999-2000, Gisle Aas.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
