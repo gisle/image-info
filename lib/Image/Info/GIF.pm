@@ -61,24 +61,37 @@ sub process_file
 	$info->push_info(0, "PixelAspectRatio" => ($aspect + 15) / 64);
     }
 
+    $info->push_info(0, "FileMediaType" => "image/gif");
+    $info->push_info(0, "FileExt" => "gif");
+
     # more??
     my $color_table = my_read($fh, $color_table_size * 3);
-    #$info->push_info(0, "GlobalColorTable", [unpack("C" . $color_table_size * 3, $color_table)]);
+    $info->push_info(0, "GlobalColorTable", color_table($color_table));
 
     my $img_no = 0;
+    my @comments;
 
     while (1) {
 	my $intro = ord(my_read($fh, 1));
 	if ($intro == 0x3B) {  # trailer (end of image)
-	    return;
+	    last;
 	}
 	elsif ($intro == 0x2C) {  # new image
+
+
+	    if (@comments) {
+		for (@comments) {
+		    $info->push_info(0, "Comment", $_);
+		}
+		@comments = ();
+	    }
+
 	    my($x_pos, $y_pos, $w, $h, $packed) =
 		unpack("vvvvC", my_read($fh, 9));
-	    $info->push_info($img_no, "XPos", $x_pos);
-	    $info->push_info($img_no, "YPos", $y_pos);
+	    $info->push_info($img_no, "ImageXPos", $x_pos);
+	    $info->push_info($img_no, "ImageYPos", $y_pos);
 	    $info->push_info($img_no, "ImageWidth", $w);
-	    $info->push_info($img_no, "ImageLength", $h);
+	    $info->push_info($img_no, "ImageHeight", $h);
 
 	    if ($packed & 0x80) {
 		# yes, we have a local color table
@@ -91,7 +104,7 @@ sub process_file
 			     ($packed & 0x040) ? 1 : 0);
 
 	    my $lzw_code_size = ord(my_read($fh, 1));
-	    $info->push_info($img_no, "LZW_MininmCodeSize", $lzw_code_size);
+	    #$info->push_info($img_no, "LZW_MininmCodeSize", $lzw_code_size);
 	    read_data_blocks($fh);  # skip image data
 	    $img_no++;
 	}
@@ -111,7 +124,7 @@ sub process_file
 	    }
 	    elsif ($label == 0xFE) {  # Comment
 		$data =~ s/\0+$//;  # is often NUL-terminated
-		$info->push_info($img_no, "Comment", $data);
+		push(@comments, $data);
 	    }
 	    elsif ($label == 0xFF) {  # Application
 		my $app = substr($data, 0, 11, "");
@@ -126,6 +139,22 @@ sub process_file
 	    die "Unknown introduced code $intro, bad GIF";
 	}
     }
+
+    for (@comments) {
+	$info->push_info(0, "Comment", $_);
+    }
+}
+
+sub color_table
+{
+    my @n = unpack("C*", shift);
+    die "Color table not a multiple of 3" if @n % 3;
+    my @table;
+    while (@n) {
+	my @triple = splice(@n, -3);
+	push(@table, sprintf("#%02x%02x%02x", @triple));
+    }
+    [reverse @table];
 }
 
 1;
