@@ -282,8 +282,9 @@ time, aperture, flash usage, GPS position, etc.
 
 =item PNG
 
-Information from IHDR, PLTE, gAMA, tEXt, tIME chunks are extracted.
-The sequence of chunks are also given by the C<PNG_Chunks> key.
+Information from IHDR, PLTE, gAMA, pHYs, tEXt, tIME chunks are
+extracted.  The sequence of chunks are also given by the C<PNG_Chunks>
+key.
 
 =item GIF
 
