@@ -5,10 +5,13 @@ use Symbol ();
 
 use vars qw($VERSION @magic);
 
+$VERSION = '0.01';
+
 @magic = (
    "\xFF\xD8" => "JPEG",
    "II*\0"    => "TIFF",
    "MM\0*"    => "TIFF",
+   "\x89PNG\x0d\x0a\x1a\x0a" => "PNG",
 );
 
 sub new
@@ -37,7 +40,7 @@ sub new
 	my $m = $magic[$i];
 	if (substr($head, 0, length($m)) eq $m) {
 	    my $self = $class->init_format($magic[$i+1], $source);
-	    $self->deref_info_array;
+	    $self->_deref_info_array;
 	    return $self;
 	}
     }
@@ -51,7 +54,7 @@ sub push_info
     push(@{$self->{"img$n"}{$key}}, $value);
 }
 
-sub deref_info_array
+sub _deref_info_array
 {
     my $self = shift;
     while (my($k,$v) = each %$self) {
