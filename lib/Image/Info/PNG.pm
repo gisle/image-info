@@ -26,8 +26,8 @@ sub process_file
     die "Bad PNG signature"
 	unless $signature eq "\x89PNG\x0d\x0a\x1a\x0a";
 
-    $info->push_info(0, "FileMediaType" => "image/png");
-    $info->push_info(0, "FileExt" => "png");
+    $info->push_info(0, "file_media_type" => "image/png");
+    $info->push_info(0, "file_ext" => "png");
 
     my @chunks;
 
@@ -62,16 +62,17 @@ sub process_file
 		      3 => "Indexed-RGB",
 		      4 => "GrayA",
 		      6 => "RGBA",
-		     }->{$ctype} || $ctype;
+		     }->{$ctype} || "PNG-$ctype";
 
 	    $compression = "Deflate" if $compression == 0;
 	    $filter = "Adaptive" if $filter == 0;
 	    $interlace = "Adam7" if $interlace == 1;
 
-	    $info->push_info(0, "ImageWidth", $w);
-	    $info->push_info(0, "ImageHeight", $h);
-	    $info->push_info(0, "BitsPerSample", $depth);
-	    $info->push_info(0, "ColorType", $ctype);
+	    $info->push_info(0, "width", $w);
+	    $info->push_info(0, "height", $h);
+	    $info->push_info(0, "sample_format", "U$depth");
+	    $info->push_info(0, "color_type", $ctype);
+
 	    $info->push_info(0, "Compression", $compression);
 	    $info->push_info(0, "PNG_Filter", $filter);
 	    $info->push_info(0, "Interlace", $interlace)
@@ -89,6 +90,7 @@ sub process_file
 	    $info->push_info(0, "Gamma", unpack("N", $data)/100_000);
 	}
 	elsif ($type eq "pHYs" && $len == 9) {
+	    my $res;
 	    my($res_x, $res_y, $unit) = unpack("NNC", $data);
 	    if (0 && $unit == 1) {
 		# convert to dpi
@@ -97,17 +99,12 @@ sub process_file
 		    $_ *= 0.0254;
 		}
 	    }
-	    if ($res_x == $res_y) {
-		$info->push_info(0, "Resolution" => $res_x);
-	    }
-	    else {
-		$info->push_info(0, "XResolution" => $res_x);
-		$info->push_info(0, "YResolution" => $res_y);
-	    }
+	    $res = ($res_x == $res_y) ? $res_x : "$res_x/$res_y";
 	    if ($unit) {
 		$unit = "dpm" if $unit == 1;
-		$info->push_info(0, "ResolutionUnit" => $unit);
+		$res .= " $unit";
 	    }
+	    $info->push_info(0, "resolution" => $res)
 	}
 	elsif ($type eq "tEXt") {
 	    my($key, $val) = split(/\0/, $data, 2);
