@@ -1,5 +1,10 @@
 package Image::TIFF::Exif;
 
+# Copyright 1999, Gisle Aas.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the same terms as Perl itself.
+
 use strict;
 use vars qw(@ISA);
 

@@ -2,7 +2,10 @@ MANIFEST
 Makefile.PL
 README
 jfifdump		List header content of a JFIF file (JPEG)
-Exif.pm			Image::Exif (common interface to TIFF and JPEG)
+imgdump
 test.jpg		An Exif example from my Digicam
+lib/Image/Info.pm
+lib/Image/Info/JPEG.pm
+lib/Image/Info/PNG.pm
 lib/Image/TIFF.pm	Parse TIFF tags
 lib/Image/TIFF/Exif.pm	Subclass that also knows about Exif tags

@@ -1,0 +1,12 @@
+#!/usr/bin/perl -w
+
+use lib "./lib";
+
+use strict;
+use Image::Info;
+
+my $img = Image::Info->new(shift || die "Usage: $0 <img>\n") || die "$!";
+
+use Data::Dump;
+Data::Dump::dump($img);
+
