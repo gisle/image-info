@@ -1,5 +1,6 @@
 MANIFEST
 Makefile.PL
+README
 jfifdump
 Exif.pm
 lib/Image/TIFF.pm
