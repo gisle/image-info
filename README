@@ -20,11 +20,10 @@ Usage is something like this:
 
 TODO:
    - add support for more image formats
-   - rational class
    - Image::TIFF should not need to slurp
 
 
-Copyright 1999-2001 Gisle Aas.
+Copyright 1999-2002 Gisle Aas.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
@@ -34,3 +33,7 @@ of Exif file format" and Thierry Bousch's Python module 'exifdump.py'
 
    http://www.butaman.ne.jp/~tsuruzoh/Computer/Digicams/exif-e.html
    http://topo.math.u-psud.fr/~bousch/exifdump.py
+
+The Exif standard is now also officially available:
+
+   http://www.pima.net/standards/it10/PIMA15740/exif.htm

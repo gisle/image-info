@@ -1,3 +1,16 @@
+2002-05-28   Gisle Aas <gisle@ActiveState.com>
+
+    Release 1.10
+
+    Support for "FUJIFILM FinePix6900ZOOM" and "Canon Canon EOS D60".
+    The Fuji support was contributed by Cyril L. Pertsev <kika@kika.ru>
+    and also included infrastructure for decoding of EXIF tags with
+    UNKNOWN value types.
+
+    Deal with signed TIFF values.
+
+
+
 2001-12-14   Gisle Aas <gisle@ActiveState.com>
 
     Release 1.09

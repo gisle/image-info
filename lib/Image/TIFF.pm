@@ -173,11 +173,13 @@ my %makernotes = (
     "OLYMPUS OPTICAL CO.,LTD C3040Z"  => [8, 'Olympus', \%olympus_tags],
     "OLYMPUS OPTICAL CO.,LTD E-10"    => [8, 'Olympus', \%olympus_tags],
     "FUJIFILM FinePix4900ZOOM"  => [-1, 'FinePix', \%fujifilm_tags],
+    "FUJIFILM FinePix6900ZOOM"  => [-1, 'FinePix', \%fujifilm_tags],
     "FUJIFILM FinePix40i"       => [-1, 'FinePix', \%fujifilm_tags],
     "FUJIFILM FinePix4700 ZOOM" => [-1, 'FinePix', \%fujifilm_tags],
     "FUJIFILM FinePixS1Pro"     => [-1, 'FinePix', \%fujifilm_tags],
     "CASIO QV-3000EX"  => [0, 'Casio', \%casio_tags],
     "Canon Canon EOS D30"            => [0, 'Canon', {}],
+    "Canon Canon EOS D60"            => [0, 'Canon', {}],
     "Canon Canon DIGITAL IXUS"       => [0, 'Canon', {}],
     "Canon Canon DIGITAL IXUS 300"   => [0, 'Canon', {}],
     "Canon Canon PowerShot G1"       => [0, 'Canon', {}],
@@ -193,6 +195,11 @@ my %exif_intr_tags = (
     0x1001 => "RelatedImageWidth",
     0x1002 => "RelatedImageLength",
 );
+
+# Tag decode helpers
+sub components_configuration_decoder;
+sub file_source_decoder;
+sub scene_type_decoder;
 
 my %exif_tags = (
     0x828D => "CFARepeatPatternDim",
@@ -221,7 +228,9 @@ my %exif_tags = (
     0x9000 => "ExifVersion",
     0x9003 => "DateTimeOriginal",
     0x9004 => "DateTimeDigitized",
-    0x9101 => "ComponentsConfiguration",
+    0x9101 => { __TAG__ => "ComponentsConfiguration",
+                DECODER => \&components_configuration_decoder,
+              },
     0x9102 => "CompressedBitsPerPixel",
     0x9201 => "ShutterSpeedValue",
     0x9202 => "ApertureValue",
@@ -274,8 +283,12 @@ my %exif_tags = (
     0xA214 => "SubjectLocation",              # 0x9214    -  -
     0xA215 => "ExposureIndex",                # 0x9215    -  -
     0xA217 => "SensingMethod",                # 0x9217    -  -
-    0xA300 => "FileSource",
-    0xA301 => "SceneType",
+    0xA300 => {__TAG__ => "FileSource",
+               DECODER => \&file_source_decoder,
+              },
+    0xA301 => {__TAG__ => "SceneType",
+               DECODER => \&scene_type_decoder,
+              },
 );
 
 my %tiff_tags = (
@@ -436,9 +449,15 @@ sub add_fields
 		    $voff = 2 + $offset + $i*12 + 8;
 		}
 		$tmpl =~ s/(\d+)$/$count*$1/e;
-		my @v = $self->unpack("x$voff$tmpl", $_);
-		$val = (@v > 1) ? \@v : $v[0];
 
+		my @v = $self->unpack("x$voff$tmpl", $_);
+
+		if ($type =~ /^S(SHORT|LONG|RATIONAL)/) {
+		    my $max = 2 ** ($1 eq "SHORT" ? 15 : 31);
+		    $v[0] -= ($max * 2) if $v[0] >= $max;
+		}
+
+		$val = (@v > 1) ? \@v : $v[0];
 		bless $val, "Image::TIFF::Rational" if $type =~ /^S?RATIONAL$/;
 	    }
 	    $tag = $tags->{$tag} || $self->tagname($tag);
@@ -466,6 +485,9 @@ sub add_fields
 		    $self->add_fields($val, $ifds, $sub);
 		    next FIELD;
 		}
+		#hack for UNDEFINED values, they all have different
+		#meanings depending on tag
+		$val = $tag->{DECODER}($self,$val) if defined($tag->{DECODER});
 		$val = $tag->{$val} if exists $tag->{$val};
 		$tag = $tag->{__TAG__};
 	    }
@@ -485,7 +507,46 @@ sub _push_field
     push(@$ifds, [@_]);
 }
 
+sub components_configuration_decoder
+{
+    my $self = shift;
+    my $val = shift;
+    my $rv = "";
+    my %v = ( 
+                0 => undef,
+                1 => 'Y',
+                2 => 'Cb',
+                3 => 'Cr',
+                4 => 'R',
+                5 => 'G',
+                6 => 'B',
+            );
+return join ( '', map { $v{$_} if defined($v{$_}) } $self->unpack('c4',$val) );
+}
 
+sub file_source_decoder
+{
+    my $self = shift;
+    my $val = shift;
+    my %v = ( 
+                3 => "(DSC) Digital Still Camera",
+            );
+    $val = $self->unpack('c',$val); 
+    return $v{$val} if $v{$val};
+return "Other";
+}
+
+sub scene_type_decoder
+{
+    my $self = shift;
+    my $val = shift;
+    my %v = ( 
+                1 => "Directly Photographed Image",
+            );
+    $val = $self->unpack('c',$val); 
+    return $v{$val} if $v{$val};
+return "Other";
+}
 
 package Image::TIFF::Rational;
 

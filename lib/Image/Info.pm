@@ -13,7 +13,7 @@ use Symbol ();
 
 use vars qw($VERSION @EXPORT_OK);
 
-$VERSION = '1.09';  # $Date: 2001/12/14 23:00:38 $
+$VERSION = '1.10';  # $Date: 2002/05/28 23:51:34 $
 
 require Exporter;
 *import = \&Exporter::import;
