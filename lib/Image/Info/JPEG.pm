@@ -92,7 +92,7 @@ sub process_app
     my($self, $mark, $data) = @_;
     my $app = $mark - 0xE0;
     my $id = substr($data, 0, 5, "");
-    $self->push_info(0, "Debug", "APP$app $id");
+    #$self->push_info(0, "Debug", "APP$app $id");
     $id = "$app-$id";
     if ($id eq "0-JFIF\0") {
 	$self->process_app0_jfif($data);
@@ -104,6 +104,7 @@ sub process_app
 	$self->process_app1_exif($data);
     }
     else {
+	$self->push_info(0, "App$id", $data);
 	#printf "  %s\n", Data::Dump::dump($data);
     }
 }
