@@ -1,0 +1,193 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Data::Dump;
+
+my %sof = (
+   0xC0 => "Baseline",
+   0xC1 => "Extended sequential",
+   0xC2 => "Progressive",
+   0xC3 => "Lossless",
+   0xC5 => "Differential sequential",
+   0xC6 => "Differential progressive",
+   0xC7 => "Differential lossless",
+   0xC9 => "Extended sequential, arithmetic coding",
+   0xCA => "Progressive, arithmetic coding",
+   0xCB => "Lossless, arithmetic coding",
+   0xCD => "Differential sequential, arithmetic coding",
+   0xCE => "Differential progressive, arithmetic coding",
+   0xCF => "Differential lossless, arithmetic coding",
+);
+
+my $file = shift || die;
+open(JFIF, $file) || die $!;
+
+my $soi = jfif_read(2);
+die "SOI missing" unless $soi eq "\xFF\xD8";
+
+while (1) {
+   my($ff, $mark, $len) = unpack("CCn", jfif_read(4));
+   unless ($ff == 0xFF) {
+      warn "Not a marker\n";
+      last;
+  }
+
+   if ($mark == 0xDA) { # Start Of Scan (begins compressed data)
+      print "SOS\n";
+      last;
+   }
+
+   if ($mark == 0xD9) { # End Of Image (end of datastream)
+      print "EOI\n";
+      last;
+   }
+
+   printf "MARK %x, len=%d\n", $mark, $len;
+   die "Bad length" if $len < 2;
+
+   my $data = jfif_read($len - 2);
+
+   if ($mark == 0xFE) { # comment
+       process_com($mark, $data);
+   }
+   elsif ($sof{$mark}) {
+       process_sof($mark, $data);
+   }
+   elsif ($mark >= 0xE0 && $mark <= 0xEF) {
+       process_app($mark, $data);
+   }
+   elsif ($mark == 0xC4) {
+       process_dht($mark, $data);
+   }
+   elsif ($mark == 0xDB) {
+       process_dqt($mark, $data);
+   }
+}
+
+#-------------------------------
+
+sub jfif_read {
+   my $len = shift;
+   my $buf;
+   my $n = read(JFIF, $buf, $len);
+   die "read failed: $!" unless defined $n;
+   die "short read ($len/$n)" unless $n == $len;
+   $buf;
+}
+
+sub process_app
+{
+    my($mark, $data) = @_;
+    my $id = substr($data, 0, 5, "");
+    printf " APP%d %s\n", $mark - 0xE0, Data::Dump::dump($id);
+    if ($mark == 0xE0) {
+	if ($id eq "JFIF\0") {
+	    process_app0_jfif($data);
+	}
+	elsif ($id eq "JFXX\0") {
+	    process_app0_jfxx($data);
+	}
+	else {
+	    #printf "  %s\n", Data::Dump::dump($data);
+	}
+    }
+    elsif ($mark == 0xE1) {
+	if ($id eq "Exif\0") {
+	    process_app1_exif($data);
+	}
+	else {
+	    #printf "  %s\n", Data::Dump::dump($data);
+	}
+    }
+    else {
+	#printf "  %s\n", Data::Dump::dump($data);
+    }
+}
+
+sub process_app0_jfif
+{
+    my $data = shift;
+    if (length $data < 9) {
+	print "Short JFIF chunk\n";
+	return;
+    }
+    my($ver_hi, $ver_lo, $units, $x_density, $y_density, $x_thumb, $y_thumb) =
+	unpack("CC C nn CC", substr($data, 0, 9, ""));
+    printf "  jfif_version=%d.%02d\n", $ver_hi, $ver_lo;
+    printf "  density=%d×%d %s\n", $x_density, $y_density,
+	            { 0 => "pixels",
+		      1 => "dpi",
+		      2 => "dots per cm"}->{$units} || "(unit $units)";
+    if ($x_thumb || $y_thumb) {
+	printf "  thumbnail=%d×%d\n", $x_thumb, $y_thumb;
+	printf "  %d bytes of thumbnail RGB data\n", length($data);
+    }
+    else {
+	print "  no thumbnail\n";
+    }
+}
+
+sub process_app0_jfxx
+{
+    my $data = shift;
+    my($code) = ord(substr($data, 0, 1, ""));
+    printf "  %s\n",
+	{ 0x10 => "JPEG thumbnail",
+	  0x11 => "Bitmap thumbnail",
+	  0x13 => "RGB thumbnail",
+	}->{$code} || (sprintf "Unknown extention code %d", $code);
+}
+
+sub process_app1_exif
+{
+    my $data = shift;
+    my $null = substr($data, 0, 1, "");
+    if ($null ne "\0") {
+	print "  Not \\0 as first char\n";
+	return;
+    }
+
+    
+    
+}
+
+sub process_sof
+{
+    my($mark, $data) = @_;
+    my($precision, $height, $width, $num_comp) =
+	unpack("CnnC", substr($data, 0, 6, ""));
+    printf " SOF %s %d×%d pixels, %d bits per sample\n %d color components\n",
+	($sof{$mark} || "?"), $width, $height, $precision, $num_comp;
+
+    my $i = 1;
+    while (length($data)) {
+	my($comp_id, $hv, $qtable) =
+	    unpack("CCC", substr($data, 0, 3, ""));
+        printf "  Color component %d: id=%d, hv=%d, qtable=%d\n",
+	    $i, $comp_id, $hv, $qtable;
+    }
+    continue {
+	$i++;
+    }
+}
+
+
+sub process_com
+{
+    my($mark, $data) = @_;
+    print " COM: " . Data::Dump::dump($data), "\n";
+}
+
+sub process_dqt
+{
+    my($mark, $data) = @_;
+    #print " DQT: " . Data::Dump::dump($data), "\n";
+    print " QTable\n";
+}
+
+sub process_dht
+{
+    my($mark, $data) = @_;
+    #print " DHT: " . Data::Dump::dump($data), "\n";
+    printf " Huffman table\n";
+}
