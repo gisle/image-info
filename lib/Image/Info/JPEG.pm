@@ -75,14 +75,19 @@ sub process_chunk
 	    $info->push_info($img_no, "BitsPerSample", $precision);
 	}
 	$info->push_info($img_no, "SamplesPerPixel" => $num_comp);
+
+	# XXX need to consider JFIF/Adobe markers to determine this...
 	if ($num_comp == 1) {
-	    $info->push_info($img_no, "ColorType" => "Gray");
+	    $info->push_info($img_no, "color_type" => "Gray");
 	}
 	elsif ($num_comp == 3) {
-	    $info->push_info($img_no, "color_type" => "RGB");  # or YCC??
+	    $info->push_info($img_no, "color_type" => "RGB");  # or YCbCr??
+	}
+	elsif ($num_comp == 4) {
+	    $info->push_info($img_no, "color_type" => "CMYK");  # or YCCK ?
 	}
 
-	if (0) {
+	if (1) {
 	    while (length($data)) {
 		my($comp_id, $hv, $qtable) =
 		    unpack("CCC", substr($data, 0, 3, ""));
@@ -107,6 +112,9 @@ sub process_app
     }
     elsif ($id eq "1-Exif\0") {
 	process_app1_exif($info, $data);
+    }
+    elsif ($id eq "14-Adobe") {
+	process_app14_adobe($info, $data);
     }
     else {
 	$info->push_info(0, "App$id", $data);
@@ -188,6 +196,14 @@ sub process_app1_exif
     # XXX If we find JPEGInterchangeFormat/JPEGInterchangeFormatLngth,
     # then we should apply process_file kind of recusively to extract
     # information of this (thumbnail) image file...
+}
+
+sub process_app14_adobe
+{
+    my($info, $data) = @_;
+    my($version, $flags0, $flags1, $transform) = unpack("nnnC", $data);
+    $info->push_info(0, "AdobeFlags" => [$flags0, $flags1]);
+    $info->push_info(0, "AdobeTransform" => $transform);
 }
 
 1;
