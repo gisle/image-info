@@ -36,6 +36,19 @@ my %tags = (
   33432 => "Copyright",
 );
 
+my %codes = (
+  ResolutionUnit => { 1 => "pixels", 2 => "dpi", 3 => "dpcm"},
+  Orientation => { 1 => "top_left",
+		   2 => "top_right",
+		   3 => "bot_right",
+		   4 => "bot_left",
+		   5 => "left_top",
+		   6 => "right_top",
+		   7 => "right_bot",
+		   8 => "left_bot",
+		 },
+);
+
 sub new
 {
     my $class = shift;
@@ -125,8 +138,12 @@ sub add_fields
 		my @v = $self->unpack("x$voff$tmpl", $_);
 		$val = (@v > 1) ? \@v : $v[0];
 	    }
-
 	    my $tag = $override_tags->{$tag} || $self->tagname($tag);
+
+	    if (my $c = $codes{$tag}) {
+		$val = $c->{$val} if exists $c->{$val};
+	    }
+
 	    $self->_push_field($ifds, $tag, $type, $count, $val);
 	}
     }
