@@ -2,7 +2,7 @@ print "1..4\n";
 
 use Image::Info qw(image_info dim html_dim);
 
-my $info = image_info("test.gif");
+my $info = image_info("img/test.gif");
 my @dim = dim($info);
 
 print "not" unless "@dim" eq "400 300";

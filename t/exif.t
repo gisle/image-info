@@ -2,7 +2,7 @@ print "1..2\n";
 
 use Image::Info qw(image_info dim);
 
-my $i = image_info("test.jpg") || die;
+my $i = image_info("img/test.jpg") || die;
 
 #use Data::Dump; print Data::Dump::dump($i), "\n";
 

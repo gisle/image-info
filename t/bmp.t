@@ -2,7 +2,7 @@ print "1..2\n";
 
 use Image::Info qw(image_info dim);
 
-my $i = image_info("test.rle") || die;
+my $i = image_info("img/test.rle") || die;
 
 #use Data::Dumper; print Dumper($i), "\n";
 
