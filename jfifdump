@@ -2,6 +2,7 @@
 
 use strict;
 use Data::Dump;
+use lib "./lib";
 
 my %sof = (
    0xC0 => "Baseline",
@@ -147,8 +148,12 @@ sub process_app1_exif
 	return;
     }
 
-    
-    
+    require Image::TIFF;
+    my $t = Image::TIFF->new(\$data);
+
+    my $d = Data::Dump::dump($t);
+    $d =~ s/^/  /gm;
+    print "$d\n";
 }
 
 sub process_sof
