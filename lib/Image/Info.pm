@@ -89,9 +89,9 @@ sub determine_file_format
 sub dim
 {
     my $img = shift || return;
-    my $x = $img->{ImageWidth} || return;
-    my $y = $img->{ImageHeight} || return;
-    wantarray ? ($x, $y) : "$x×$y";
+    my $x = $img->{width} || return;
+    my $y = $img->{height} || return;
+    wantarray ? ($x, $y) : "$x/$y";
 }
 
 sub html_dim
@@ -180,26 +180,26 @@ The following names are common for any image format:
 
 =over
 
-=item FileMediaType
+=item file_media_type
 
 This is the MIME type that is appropriate for the given file format.
 This is a string like: "image/png" or "image/jpeg".
 
-=item FileExt
+=item file_ext
 
 The is the suggested file name extention for a file of the given file
 format.  It is a 3 letter, lowercase string like "png", "jpg".
 
-=item ImageWidth
+=item width
 
 This is the number of pixels horizontally in the image.
 
-=item ImageHeight
+=item height
 
 This is the number of pixels vertically in the image.  (TIFF use the
 name ImageLength for this field.)
 
-=item ColorType
+=item color_type
 
 This is a short string describing what kind of values the pixels
 encode.  The value can be one of the following:
