@@ -1,3 +1,12 @@
+
+    Support for Exif 2.2 tags contributed by
+    Stephane Bailliez <sbailliez@apache.org>.
+
+    Support Olympus C4000Z MakerNote also from
+    Stephane Bailliez.
+
+
+
 2002-07-04   Gisle Aas <gisle@ActiveState.com>
 
     Release 1.11
