@@ -66,36 +66,28 @@ sub process_chunk
     elsif ($sof{$mark}) {
         my($precision, $height, $width, $num_comp) =
             unpack("CnnC", substr($data, 0, 6, ""));
-	$info->push_info(0, "ImageType", "JPEG ". $sof{$mark});
+	$info->push_info(0, "JPEG_Type", $sof{$mark});
 	$info->push_info(0, "ImageWidth", $width);
 	$info->push_info(0, "ImageHeight", $height);
 
 	for (1..$num_comp) {
 	    $info->push_info(0, "BitsPerSample", $precision);
 	}
+	$info->push_info(0, "SamplesPerPixel" => $num_comp);
 	if ($num_comp == 1) {
 	    $info->push_info(0, "ColorType" => "Gray");
 	}
 	elsif ($num_comp == 3) {
-	    $info->push_info(0, "ColorType" => "RGB");
-	}
-	else {
-	    $info->push_info(0, "ColorComponents" => 3);
+	    $info->push_info(0, "ColorType" => "RGB");  # or YCC??
 	}
 
-=for comment
-        my $i = 1;
-        while (length($data)) {
-            my($comp_id, $hv, $qtable) =
-                unpack("CCC", substr($data, 0, 3, ""));
-            printf "  Color component %d: id=%d, hv=%d, qtable=%d\n",
-                $i, $comp_id, $hv, $qtable;
-        }
-        continue {
-            $i++;
-        }
-=cut
-
+	if (0) {
+	    while (length($data)) {
+		my($comp_id, $hv, $qtable) =
+		    unpack("CCC", substr($data, 0, 3, ""));
+		$info->push_info(0, "ColorComponents", [$comp_id, $hv, $qtable]);
+	    }
+	}
     }
 }
 
@@ -131,11 +123,16 @@ sub process_app0_jfif
     my($ver_hi, $ver_lo, $units, $x_density, $y_density, $x_thumb, $y_thumb) =
 	unpack("CC C nn CC", substr($data, 0, 9, ""));
     $info->push_info(0, "JFIF_Version", sprintf("%d.%02d", $ver_hi, $ver_lo));
-    $info->push_info(0, "XResolution" => $x_density);
-    $info->push_info(0, "YResolution" => $y_density);
+    if ($x_density == $y_density) {
+	$info->push_info(0, "Resulution" => $x_density);
+    }
+    else {
+	$info->push_info(0, "XResolution" => $x_density);
+	$info->push_info(0, "YResolution" => $y_density);
+    }
     $info->push_info(0, "ResolutionUnit" => { 0 => "pixels",
 					      1 => "dpi",
-					      2 => "dots per cm"
+					      2 => "dpcm"
 					    }->{$units} || $units);
 
     if ($x_thumb || $y_thumb) {
