@@ -59,6 +59,7 @@ sub process_file
 
     if ($aspect) {
 	$info->push_info(0, "PixelAspectRatio" => ($aspect + 15) / 64);
+	# XXX shold set XResolution/YResulution...
     }
 
     $info->push_info(0, "FileMediaType" => "image/gif");
@@ -100,8 +101,8 @@ sub process_file
 		my $color_table = my_read($fh, $ct_size * 3);
 	    }
 
-	    $info->push_info($img_no, "Interlaced" =>
-			     ($packed & 0x040) ? 1 : 0);
+	    $info->push_info($img_no, "Interlace" => "GIF")
+		if $packed & 0x040;
 
 	    my $lzw_code_size = ord(my_read($fh, 1));
 	    #$info->push_info($img_no, "LZW_MininmCodeSize", $lzw_code_size);
