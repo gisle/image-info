@@ -1,3 +1,26 @@
+1999-12-25   Gisle Aas <gisle@aas.no>
+
+    Release 0.03
+
+    Eliminated Image::TIFF::Exif.  The TIFF module now knows about
+    the Exif tags by itself.
+
+    Errors are returned as a hash too.
+
+    Start on Image::Info POD
+
+    Various tweaks to the reported info keys for JPEG/PNG/GIF.
+
+    Support Netscape's Loop extention to GIF.
+
+    Support ColorTable dump for GIF and PNG.
+
+    Support FileMediaType/FileExt for all image formats.
+
+    Report number of repeated chunks in PNG_Chunks values.
+
+
+
 1999-12-22   Gisle Aas <gisle@aas.no>
 
     Release 0.02
