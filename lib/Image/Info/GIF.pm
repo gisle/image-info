@@ -62,8 +62,8 @@ sub process_file
 	# XXX shold set XResolution/YResulution...
     }
 
-    $info->push_info(0, "FileMediaType" => "image/gif");
-    $info->push_info(0, "FileExt" => "gif");
+    $info->push_info(0, "file_media_type" => "image/gif");
+    $info->push_info(0, "file_ext" => "gif");
 
     # more??
     my $color_table = my_read($fh, $color_table_size * 3);
@@ -82,19 +82,19 @@ sub process_file
 
 	    if (@comments) {
 		for (@comments) {
-		    $info->push_info(0, "Comment", $_);
+		    $info->push_info(0, "comment", $_);
 		}
 		@comments = ();
 	    }
 
-	    $info->push_info($img_no, "ColorType" => "Indexed-RGB");
+	    $info->push_info($img_no, "color_type" => "Indexed-RGB");
 
 	    my($x_pos, $y_pos, $w, $h, $packed) =
 		unpack("vvvvC", my_read($fh, 9));
 	    $info->push_info($img_no, "XPosition", $x_pos);
 	    $info->push_info($img_no, "YPosition", $y_pos);
-	    $info->push_info($img_no, "ImageWidth", $w);
-	    $info->push_info($img_no, "ImageHeight", $h);
+	    $info->push_info($img_no, "width", $w);
+	    $info->push_info($img_no, "height", $h);
 
 	    if ($packed & 0x80) {
 		# yes, we have a local color table
@@ -151,7 +151,7 @@ sub process_file
     }
 
     for (@comments) {
-	$info->push_info(0, "Comment", $_);
+	$info->push_info(0, "comment", $_);
     }
 }
 
