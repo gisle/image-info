@@ -43,7 +43,7 @@ while (1) {
       last;
    }
 
-   printf "MARK %x, len=%d\n", $mark, $len;
+   printf "MARK 0x%02X, len=%d\n", $mark, $len;
    die "Bad length" if $len < 2;
 
    my $data = jfif_read($len - 2);
