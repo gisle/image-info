@@ -44,6 +44,7 @@ sub new
     if (!ref($source)) {
 	local(*F);
 	open(F, $source) || return;
+	binmode(F);
 	$source = \*F;
     }
 
