@@ -5,6 +5,7 @@ Makefile.PL
 README
 exifdump			Test driver script
 imgdump				Test driver script
+img/gps.jpg
 img/test.gif			An GIF example
 img/test.jpg			An Exif example from my Digicam
 img/test.pbm
