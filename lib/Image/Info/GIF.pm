@@ -67,7 +67,7 @@ sub process_file
 
     # more??
     my $color_table = my_read($fh, $color_table_size * 3);
-    $info->push_info(0, "GlobalColorTable", color_table($color_table));
+    #$info->push_info(0, "GlobalColorTable", color_table($color_table));
 
     my $img_no = 0;
     my @comments;
@@ -87,10 +87,12 @@ sub process_file
 		@comments = ();
 	    }
 
+	    $info->push_info($img_no, "ColorType" => "Indexed-RGB");
+
 	    my($x_pos, $y_pos, $w, $h, $packed) =
 		unpack("vvvvC", my_read($fh, 9));
-	    $info->push_info($img_no, "ImageXPos", $x_pos);
-	    $info->push_info($img_no, "ImageYPos", $y_pos);
+	    $info->push_info($img_no, "XPosition", $x_pos);
+	    $info->push_info($img_no, "YPosition", $y_pos);
 	    $info->push_info($img_no, "ImageWidth", $w);
 	    $info->push_info($img_no, "ImageHeight", $h);
 
