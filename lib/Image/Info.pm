@@ -10,7 +10,7 @@ use Symbol ();
 
 use vars qw($VERSION @magic);
 
-$VERSION = '0.01';  # $Date$
+$VERSION = '0.02';  # $Date$
 
 @magic = (
    "\xFF\xD8" => "JPEG",
