@@ -1,3 +1,22 @@
+1999-12-22   Gisle Aas <gisle@aas.no>
+
+    Release 0.02
+
+    Removed external OO interface.  The main interface is now
+    an plain function called image_info() that returns one or
+    more hashes.  One hash per image found in the file.
+
+    Exif/TIFF integer that are codes representing something else
+    are now expaned.
+
+    TIFF Rational values are reduced to plain integers when
+    possible.
+
+    Added GIF support
+
+    Added some test scripts
+   
+
 1999-12-19   Gisle Aas <gisle@aas.no>
 
     Release 0.01 (now Image-Info)
